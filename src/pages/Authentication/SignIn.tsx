@@ -4,37 +4,78 @@ import {
   FiChevronDown,
   FiKey,
   FiTool,
-  FiSettings,
+  FiUserCheck,
 } from 'react-icons/fi';
 
-import 'ldrs/bouncy';
-import { login } from '../../api/auth';
-import { Transition } from '@headlessui/react';
+import 'ldrs/zoomies';
+import { activeRoleSelected, login } from '../../api/auth';
+import { RadioGroup, Transition } from '@headlessui/react';
+import { api as apiIso } from '../../api/master_iso';
+import { credential as hasCredential } from '../../utils/constant';
 
 const SignIn: React.FC = () => {
   interface Credential {
     username: string;
     password: string;
-    role: string;
     iso_id: string;
   }
 
   interface Transition {
     show: boolean;
     loading: boolean;
+    loadReadyDashboard: boolean;
+    isSelectRole: boolean;
   }
 
   const [transition, setTransition] = useState<Transition>({
     show: false,
+    loadReadyDashboard: false,
     loading: false,
+    isSelectRole: false,
   });
+
+  const [isoList, setIsoList] = useState<any>();
+  const [availableRole, setAvailable] = useState<string[]>(['']);
+  const [greetingName, setGreeting] = useState<string>('');
+  const [selectedRole, setSelectedRole] = useState<string>('');
 
   const [credential, setCredential] = useState<Credential>({
     username: '',
     password: '',
-    role: '',
     iso_id: '',
   });
+
+  useEffect(() => {
+    if (hasCredential != null) {
+      if (hasCredential?.meta?.active_role == null) {
+        setTransition((prev: Transition) => ({
+          ...prev,
+          isSelectRole: true,
+        }));
+      }
+    }
+  }, [transition.isSelectRole]);
+
+  useEffect(() => {
+    apiIso
+      .isoGetAllForSelect()
+      .then((res) => setIsoList(res))
+      .catch((err) => console.log(err));
+  }, []);
+
+  // Check IF Has Credential But Expired Token
+  useEffect(() => {
+    if (hasCredential) {
+      if (new Date() < new Date(hasCredential?.token.expired_at)) {
+        setAvailable(hasCredential?.user?.role);
+      } else {
+        setTransition((prev: Transition) => ({
+          ...prev,
+          isSelectRole: false,
+        }));
+      }
+    }
+  }, []);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -55,32 +96,55 @@ const SignIn: React.FC = () => {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     setTransition((prev) => ({ ...prev, loading: true }));
     e.preventDefault();
-    login(credential, setTransition);
+    login(credential, setTransition).then((res) => {
+      setGreeting(res?.user?.nama_lengkap);
+      setAvailable(res?.user?.role);
+      setTimeout(() => {
+        setTransition((prev: Transition) => ({
+          ...prev,
+          show: true,
+        }));
+      }, 250);
+    });
   };
   return (
-    <div className="w-[100vw] h-[100vh] overflow-hidden bg-blue-200 flex justify-center items-center">
+    <div className="w-[100vw] h-[100vh] overflow-hidden bg-blue-300 flex justify-center items-center">
       <Transition
         show={transition.show}
         enter="transform transition duration-300"
-        enterFrom="opacity-0 translate-y-24"
-        enterTo="opacity-100 translate-y-0"
+        enterFrom="opacity-0 scale-95"
+        enterTo="opacity-100 scale-100"
         leave="transform duration-300 transition"
-        leaveFrom="opacity-100 translate-y-0"
-        leaveTo="opacity-0 translate-y-24"
-        className="flex flex-wrap items-center p-6 w-full mx-4 md:w-fit md:mx-0 bg-white rounded-lg shadow-default"
+        leaveFrom="opacity-100 scale-100"
+        leaveTo="opacity-0 scale-95"
+        className={`flex flex-wrap md:bg-opacity-25 md:backdrop-filter md:backdrop-blur-lg items-center overflow-hidden md:px-18 px-6 py-6 md:py-0 w-full mx-4 md:w-3/4 md:mx-0 bg-white rounded-lg shadow-default`}
       >
         <div className="hidden w-full xl:block xl:w-1/2">
           <div className="py-17.5 px-26 text-center">
-            <p className="2xl:px-20 text-3xl font-bold text-slate-700">
+            {/* <p className="2xl:px-20 text-3xl font-bold text-slate-700">
               Sistem Audit Mutu Internal Pura
-            </p>
+            </p> */}
             <center>
-              <img src="/img/login-vector.png" alt="" className="" />
+              <img
+                src="/img/log-in.svg"
+                alt=""
+                className="w-full h-full -translate-x-8 scale-[2.5]"
+              />
             </center>
           </div>
         </div>
 
-        <div className="w-full xl:w-1/2 ">
+        {/* Login Form */}
+        <Transition
+          show={transition.show && !transition.isSelectRole}
+          enter="transform transition duration-300"
+          enterFrom="opacity-0 scale-95"
+          enterTo="opacity-100 scale-100"
+          leave="transform duration-300 transition"
+          leaveFrom="opacity-100 scale-100"
+          leaveTo="opacity-0 scale-95"
+          className="w-full xl:w-1/2 "
+        >
           <div className="w-full p-4 sm:p-12.5 xl:p-17.5">
             <h2 className="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2">
               Login Untuk Akses AMI
@@ -101,7 +165,7 @@ const SignIn: React.FC = () => {
                     name="username"
                     id="username"
                     placeholder="Masukkan Username"
-                    className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    className="w-full rounded-lg border bg-white border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                   />
 
                   <span className="absolute right-5 top-5">
@@ -123,7 +187,7 @@ const SignIn: React.FC = () => {
                     name="password"
                     id="password"
                     placeholder="Masukkan Password"
-                    className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    className="w-full rounded-lg border bg-white border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                   />
 
                   <span className="absolute right-5 top-5">
@@ -138,7 +202,7 @@ const SignIn: React.FC = () => {
                     ISO
                   </label>
 
-                  <div className="relative z-20 bg-white dark:bg-form-input">
+                  <div className="relative z-20 rounded-md bg-white dark:bg-form-input">
                     <span className="absolute top-1/2 left-4 z-30 -translate-y-1/2">
                       <FiTool className="text-xl text-slate-400" />
                     </span>
@@ -153,38 +217,11 @@ const SignIn: React.FC = () => {
                       }`}
                     >
                       <option value="">Pilih ISO</option>
-                      <option value="9001:2015">9001:2015</option>
-                    </select>
-
-                    <span className="absolute top-1/2 right-4 z-10 -translate-y-1/2">
-                      <FiChevronDown className="text-xl text-slate-400" />
-                    </span>
-                  </div>
-                </div>
-                <div className="w-full">
-                  <label className="mb-3 block text-black dark:text-white">
-                    Akses Masuk
-                  </label>
-
-                  <div className="relative z-20 bg-white dark:bg-form-input">
-                    <span className="absolute top-1/2 left-4 z-30 -translate-y-1/2">
-                      <FiSettings className="text-xl text-slate-400" />
-                    </span>
-
-                    <select
-                      value={credential.role}
-                      required
-                      onChange={handleChange}
-                      name="role"
-                      id="role"
-                      className={`relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-12 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input 
-                      }`}
-                    >
-                      <option value="">Pilih Akses</option>
-                      <option value="management">Management</option>
-                      <option value="pdd">PDD</option>
-                      <option value="auditor">Auditor</option>
-                      <option value="auditee">Auditee</option>
+                      {isoList?.map((item: any, index: number) => (
+                        <option key={index} value={item?.value}>
+                          {item?.label}
+                        </option>
+                      ))}
                     </select>
 
                     <span className="absolute top-1/2 right-4 z-10 -translate-y-1/2">
@@ -201,7 +238,7 @@ const SignIn: React.FC = () => {
                   className="w-full cursor-pointer disabled:cursor-wait rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
                 >
                   {transition.loading ? (
-                    <l-bouncy size={25} speed={1.2} color={'white'} />
+                    <l-zoomies size={200} speed={1} color={'#FFFDD0'} />
                   ) : (
                     <span>Log in</span>
                   )}
@@ -209,7 +246,101 @@ const SignIn: React.FC = () => {
               </div>
             </form>
           </div>
-        </div>
+        </Transition>
+
+        {/* Available Role */}
+        <Transition
+          show={transition.show && transition.isSelectRole}
+          enter="transform transition delay-[200ms] duration-300"
+          enterFrom="opacity-0 scale-95"
+          enterTo="opacity-100 scale-100"
+          leave="transform duration-300 transition"
+          leaveFrom="opacity-100 scale-100"
+          leaveTo="opacity-0 scale-95"
+          className="w-full xl:w-1/2 "
+        >
+          <div className="w-full p-4 sm:p-12.5 xl:p-17.5">
+            <div className="mb-9">
+              <h2 className="text-2xl font-bold text-black dark:text-white sm:text-title-xl2">
+                Halo,{' '}
+                {greetingName
+                  ? greetingName
+                  : hasCredential?.user?.nama_lengkap}
+              </h2>
+              <h6 className="text-md font-medium text-black dark:text-white">
+                Plih akses yang tersedia untuk Anda
+              </h6>
+            </div>
+            <RadioGroup
+              value={selectedRole}
+              onChange={(e) => setSelectedRole(e)}
+              className={'mb-6'}
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {availableRole?.map((item: any, index: number) => (
+                  <RadioGroup.Option
+                    key={index}
+                    value={item}
+                    className={({ active, checked }) =>
+                      `transition-all w-full  ${
+                        checked
+                          ? 'bg-slate-800/75 text-white'
+                          : 'md:bg-white md:border-0 border border-dashed border-slate-400'
+                      }
+                    relative flex cursor-pointer rounded-lg px-5 py-4 shadow-md focus:outline-none`
+                    }
+                  >
+                    {({ active, checked }) => (
+                      <>
+                        <div className="flex relative w-full items-center justify-between">
+                          <div className="flex items-center">
+                            <div className="text-sm">
+                              <RadioGroup.Label
+                                as="p"
+                                className={`font-medium uppercase  ${
+                                  checked ? 'text-white' : 'text-gray-900'
+                                }`}
+                              >
+                                {item}
+                              </RadioGroup.Label>
+                            </div>
+                          </div>
+                          {checked && (
+                            <div className="shrink-0 absolute right-0 text-white">
+                              <FiUserCheck className="h-5.5 w-5.5" />
+                            </div>
+                          )}
+                        </div>
+                      </>
+                    )}
+                  </RadioGroup.Option>
+                ))}
+              </div>
+            </RadioGroup>
+            <div className="mb-5">
+              <button
+                onClick={() => {
+                  setTransition((prev: any) => ({
+                    ...prev,
+                    loadReadyDashboard: true,
+                  }));
+                  activeRoleSelected(selectedRole);
+                }}
+                type="button"
+                disabled={selectedRole == '' || transition.loadReadyDashboard}
+                className="w-full cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
+              >
+                <span>
+                  {transition.loadReadyDashboard ? (
+                    <l-zoomies size={200} speed={1} color={'#FFFDD0'} />
+                  ) : (
+                    <span>Pilih Akses</span>
+                  )}
+                </span>
+              </button>
+            </div>
+          </div>
+        </Transition>
       </Transition>
     </div>
   );

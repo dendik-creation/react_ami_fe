@@ -6,34 +6,48 @@ const NotFound: React.FC = () => {
   const [show, setShow] = useState<boolean>(false);
   const history = useNavigate();
   const handlePrev = () => {
-    history(-1);
+    setShow(false);
+    setTimeout(() => {
+      history(-1);
+    }, 500);
   };
   useEffect(() => {
     setTimeout(() => {
       setShow(true);
-    }, 10);
+    }, 250);
   }, []);
   return (
     <>
-      <div className="mx-auto w-full h-[100vh] overflow-hidden">
+      <div className="mx-auto w-full h-[100vh] bg-slate-800 overflow-hidden">
         <div className="rounded-sm h-full flex justify-center items-center">
-          <Transition
-            show={show}
-            enter="transform transition duration-300 delay-[200ms]"
-            enterFrom="opacity-0 translate-y-12"
-            enterTo="opacity-100 translate-y-0"
-            leave="transform duration-300 transition ease-in-out"
-            leaveFrom="opacity-100 translate-y-0"
-            leaveTo="opacity-0 translate-y-12"
-            className="mx-auto max-w-[310px]"
-          >
-            <img src="/img/not-found.svg" alt="NotFoundImage" />
+          <div className="mx-auto flex justify-evenly flex-col md:flex-row items-center w-full">
+            <Transition
+              show={show}
+              enter="transform transition duration-300 delay-[500ms]"
+              enterFrom="opacity-0 scale-110"
+              enterTo="opacity-100 scale-100"
+              leave="transform duration-300 transition ease-in-out"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-75"
+              as="img"
+              src="/img/log-in.svg"
+              className="w-3/4 md:w-1/2 h-full"
+            ></Transition>
 
-            <div className="mt-7.5 text-center">
-              <h2 className="mb-3 text-2xl font-bold text-black dark:text-white">
-                Halaman Tidak Ditemukan
+            <Transition
+              show={show}
+              enter="transform transition duration-300 delay-[750ms]"
+              enterFrom="opacity-0 scale-110"
+              enterTo="opacity-100 scale-100"
+              leave="transform duration-300  transition ease-in-out"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-75"
+              className="mt-7.5 text-center mx-2 md:mx-0 md:text-end"
+            >
+              <h2 className="mb-3 text-4xl font-bold text-white">
+                404 Not Found
               </h2>
-              <p className="font-medium">
+              <p className="font-medium text-white">
                 Halaman yang kamu cari sepertinya dialihkan atau tidak pernah
                 ada
               </p>
@@ -56,8 +70,8 @@ const NotFound: React.FC = () => {
                 </svg>
                 <span>Kembali Ke Sebelumnya</span>
               </button>
-            </div>
-          </Transition>
+            </Transition>
+          </div>
         </div>
       </div>
     </>

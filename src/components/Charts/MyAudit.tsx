@@ -3,55 +3,6 @@ import React, { useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
 import { FiBarChart2 } from 'react-icons/fi';
 
-const options: ApexOptions = {
-  chart: {
-    fontFamily: 'Quicksand Semibold',
-    type: 'bar',
-    height: 335,
-    stacked: true,
-    toolbar: {
-      show: true,
-    },
-    zoom: {
-      enabled: false,
-    },
-  },
-  responsive: [
-    {
-      breakpoint: 1536,
-      options: {
-        plotOptions: {
-          bar: {
-            borderRadius: 6,
-            columnWidth: '70%',
-            distributed: true,
-          },
-        },
-      },
-    },
-  ],
-  plotOptions: {
-    bar: {
-      horizontal: false,
-      borderRadius: 6,
-      columnWidth: '40%',
-      borderRadiusApplication: 'end',
-      borderRadiusWhenStacked: 'last',
-      distributed: true,
-    },
-  },
-  colors: ['#FB5454', '#F0950C', '#576BF6'],
-  dataLabels: {
-    enabled: true,
-  },
-  xaxis: {
-    categories: ['Mayor', 'Minor', 'Observasi'],
-  },
-  legend: {
-    show: false,
-  },
-};
-
 interface AuditChart {
   series: {
     name: string;
@@ -59,7 +10,72 @@ interface AuditChart {
   }[];
 }
 
-const MyAudit: React.FC = ({ dataset }: any) => {
+interface Dataset {
+  dataset: {
+    mayor: number;
+    minor: number;
+    observasi: number;
+    total?: number;
+  };
+}
+
+const MyAudit: React.FC<Dataset> = ({ dataset }) => {
+  const options: ApexOptions = {
+    chart: {
+      fontFamily: 'Quicksand Semibold',
+      type: 'bar',
+      height: 335,
+      stacked: true,
+      toolbar: {
+        show: true,
+      },
+      zoom: {
+        enabled: false,
+      },
+    },
+    yaxis: {
+      min: 0,
+      labels: {
+        formatter: (val, opts) => `${Math.floor(val)}`,
+      },
+      max: Math.max(dataset?.mayor, dataset?.minor, dataset?.observasi) * 5,
+    },
+    responsive: [
+      {
+        breakpoint: 1536,
+        options: {
+          plotOptions: {
+            bar: {
+              borderRadius: 6,
+              columnWidth: '70%',
+              distributed: true,
+            },
+          },
+        },
+      },
+    ],
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        borderRadius: 6,
+        columnWidth: '40%',
+        borderRadiusApplication: 'end',
+        borderRadiusWhenStacked: 'last',
+        distributed: true,
+      },
+    },
+    colors: ['#FB5454', '#F0950C', '#576BF6'],
+    dataLabels: {
+      enabled: true,
+    },
+    xaxis: {
+      categories: ['Mayor', 'Minor', 'Observasi'],
+    },
+    legend: {
+      show: false,
+    },
+  };
+
   const [state, setState] = useState<AuditChart>({
     series: [
       {
@@ -80,7 +96,7 @@ const MyAudit: React.FC = ({ dataset }: any) => {
       </div>
 
       <div className="-ml-5 -mb-9">
-        {dataset?.minor > 0 && dataset?.mayor > 0 && dataset?.observasi > 0 ? (
+        {dataset?.minor > 0 || dataset?.mayor > 0 || dataset?.observasi > 0 ? (
           <ReactApexChart
             options={options}
             series={state.series}
@@ -91,7 +107,7 @@ const MyAudit: React.FC = ({ dataset }: any) => {
           <div className="w-full flex flex-col mb-5 justify-center items-center h-[295px]">
             <FiBarChart2 className="text-9xl text-blue-300" />
             <div className="text-slate-700 font-medium">
-              Anda tidak pernah mengaudit
+              Temuan tidak pernah Anda temukan dalam audit
             </div>
           </div>
         )}

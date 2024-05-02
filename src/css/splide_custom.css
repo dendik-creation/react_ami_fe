@@ -1,0 +1,65 @@
+/* Add numbers to pagination buttons by CSS */
+.splide__pagination {
+  counter-reset: pagination-num;
+}
+
+.splide__pagination__page:before {
+  counter-increment: pagination-num;
+  content: counter(pagination-num);
+  transition: all ease 0.3s;
+}
+
+.splide__pagination {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  margin: -50px 0;
+  gap: 0.3em;
+  width: 100%;
+  transition: all ease 0.3s;
+}
+
+.splide__pagination__page {
+  display: block;
+  width: 40px;
+  height: 40px;
+  background: rgba(28, 28, 28, 0.2);
+  border-radius: 4px;
+  color: black;
+  margin: 0 2px;
+  cursor: pointer;
+}
+
+.splide__pagination__page.is-active {
+  background: rgba(30, 41, 59, 1);
+  border-radius: 4px;
+  opacity: 1;
+  transform: scale(1);
+  color: white;
+}
+
+.splide__arrow {
+  /* Gaya umum untuk semua panah */
+  background-color: #ccc;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.splide__arrow--prev {
+  /* Gaya khusus untuk panah prev */
+  background: rgba(28, 28, 28, 0.2);
+  scale: 1.5;
+  left: -15px; /* Posisi horizontal */
+  top: 50%; /* Posisi vertikal */
+  transform: translateY(-50%); /* Pusat vertikal */
+}
+
+.splide__arrow--next {
+  /* Gaya khusus untuk panah next */
+  background: rgba(28, 28, 28, 0.2);
+  scale: 1.5;
+  right: -15px; /* Posisi horizontal */
+  top: 50%; /* Posisi vertikal */
+  transform: translateY(-50%); /* Pusat vertikal */
+}

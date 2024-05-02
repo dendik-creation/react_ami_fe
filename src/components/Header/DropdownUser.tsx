@@ -4,7 +4,9 @@ import { logout } from '../../api/auth';
 import { Transition, Dialog } from '@headlessui/react';
 import 'ldrs/bouncy';
 import { credential } from '../../utils/constant';
-import { FiChevronDown, FiLogOut, FiUser } from 'react-icons/fi';
+import { FiChevronLeft, FiLogOut, FiShuffle, FiUser } from 'react-icons/fi';
+import { HiUser } from 'react-icons/hi';
+import SwapRoleModal from '../Modal/SwapRoleModal';
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -13,6 +15,9 @@ const DropdownUser = () => {
 
   const trigger = useRef<any>(null);
   const dropdown = useRef<any>(null);
+
+  // Swap Role
+  const [showSwapRole, setShowSwapRoleModal] = useState<boolean>(false);
 
   // close on click outside
   useEffect(() => {
@@ -62,12 +67,15 @@ const DropdownUser = () => {
           </span>
         </span>
 
-        <span className="h-12 w-12 relative overflow-hidden bg-slate-400 flex justify-center items-center rounded-full">
-          {/* <HiUser className="text-5xl absolute -bottom-1.5 text-slate-100" /> */}
-          <img src="/img/avatar.jpg" alt="" />
+        <span className="h-12 w-12 relative overflow-hidden bg-emerald-300 flex justify-center items-center rounded-full">
+          <HiUser className="text-5xl absolute -bottom-1.5 text-slate-50" />
         </span>
 
-        <FiChevronDown className="text-xl" />
+        <FiChevronLeft
+          className={`text-xl transition-all ${
+            dropdownOpen == true ? 'rotate-180' : 'rotate-0'
+          }`}
+        />
       </Link>
 
       {/* <!-- Dropdown Start --> */}
@@ -75,19 +83,30 @@ const DropdownUser = () => {
         ref={dropdown}
         onFocus={() => setDropdownOpen(true)}
         onBlur={() => setDropdownOpen(false)}
-        className={`absolute right-0 mt-4 flex w-62.5 flex-col rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark ${
-          dropdownOpen === true ? 'block' : 'hidden'
+        className={`absolute right-0 mt-4 flex w-62.5 flex-col transition-all rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark ${
+          dropdownOpen === true
+            ? 'opacity-100 translate-x-0'
+            : 'opacity-0 translate-x-100'
         }`}
       >
         <ul className="flex flex-col gap-5 border-b border-stroke px-6 py-4 dark:border-strokedark">
           <li>
             <Link
-              to="/profile"
+              to="/my-profile"
               className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
             >
               <FiUser className="text-xl" />
               <span>Profil Saya</span>
             </Link>
+          </li>
+          <li>
+            <button
+              onClick={() => setShowSwapRoleModal(true)}
+              className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
+            >
+              <FiShuffle className="text-xl" />
+              <span>Pindah Akses</span>
+            </button>
           </li>
         </ul>
         <button
@@ -130,41 +149,44 @@ const DropdownUser = () => {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                  <Dialog.Title
-                    as="h1"
-                    className="text-2xl font-semibold text-gray-900"
-                  >
-                    Konfirmasi Log out
-                  </Dialog.Title>
-                  <div className="mt-2">
-                    <p className="text-sm text-gray-500">
-                      Log out akan menghapus sesi Anda
-                    </p>
-                  </div>
+                <Dialog.Panel className="w-full flex max-w-3xl gap-8 items-center transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                  <FiLogOut className="text-red-400 text-6xl" />
+                  <div className="w-full">
+                    <Dialog.Title
+                      as="h1"
+                      className="text-2xl font-semibold text-gray-900"
+                    >
+                      Konfirmasi Log out
+                    </Dialog.Title>
+                    <div className="mt-2">
+                      <p className="text-sm text-gray-500">
+                        Log out akan menghapus sesi Anda
+                      </p>
+                    </div>
 
-                  <div className="mt-4 flex justify-center items-center gap-3">
-                    <button
-                      type="button"
-                      disabled={isLoggingOut}
-                      className="w-full justify-center rounded-md border border-transparent bg-red-400 px-4 py-2 text-sm font-medium text-slate-200 hover:bg-red-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
-                      onClick={confirmLogout}
-                    >
-                      {isLoggingOut ? (
-                        <l-bouncy size={30} speed={1.2} color={'#FFFDD0'} />
-                      ) : (
-                        <span>Log Out</span>
-                      )}
-                    </button>
-                    <button
-                      type="button"
-                      disabled={isLoggingOut}
-                      className={`
+                    <div className="mt-4 flex justify-center items-center gap-3">
+                      <button
+                        type="button"
+                        disabled={isLoggingOut}
+                        className="w-full justify-center rounded-md border border-transparent bg-red-400 px-4 py-2 text-sm font-medium text-slate-200 hover:bg-red-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+                        onClick={confirmLogout}
+                      >
+                        {isLoggingOut ? (
+                          <l-zoomies size={200} speed={1} color={'#FFFDD0'} />
+                        ) : (
+                          <span>Log Out</span>
+                        )}
+                      </button>
+                      <button
+                        type="button"
+                        disabled={isLoggingOut}
+                        className={`
                       justify-center rounded-md border disabled:opacity-35 transition-all border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2`}
-                      onClick={() => setShowModal(false)}
-                    >
-                      Batalkan
-                    </button>
+                        onClick={() => setShowModal(false)}
+                      >
+                        Batalkan
+                      </button>
+                    </div>
                   </div>
                 </Dialog.Panel>
               </Transition.Child>
@@ -172,6 +194,11 @@ const DropdownUser = () => {
           </div>
         </Dialog>
       </Transition>
+
+      <SwapRoleModal
+        show={showSwapRole}
+        setShowSwapRoleModal={setShowSwapRoleModal}
+      />
     </div>
   );
 };

@@ -10,6 +10,7 @@ import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import CardDataStats from '../../components/CardDataStats';
 import { FiBarChart2, FiUser } from 'react-icons/fi';
 import DepartemenList from '../../components/Tables/DepartemenList';
+import LoadFetch from '../../common/Loader/LoadFetch';
 
 interface Audit {
   mayor: number;
@@ -51,7 +52,7 @@ const AuditorDashboard: React.FC = () => {
         leaveTo="opacity-0"
         className="w-full h-full flex justify-center items-center"
       >
-        <l-bouncy size={100} speed={1.5} color={'#191970'} />
+        <LoadFetch />
       </Transition>
       <div className="mb-6">
         <Transition
@@ -122,7 +123,7 @@ const AuditorDashboard: React.FC = () => {
           >
             <CardDataStats
               total={data?.my_audit?.total}
-              text="Jumlah Saya Mengaudit"
+              text="Jumlah Temuan Saya Dalam Audit"
             >
               <FiBarChart2 className="text-4xl" />
             </CardDataStats>
@@ -138,7 +139,7 @@ const AuditorDashboard: React.FC = () => {
           >
             <CardDataStats
               total={data?.all_audit?.total}
-              text="Jumlah Seluruh Mengaudit"
+              text="Akumulasi Keseluruhan Temuan Dalam Audit"
             >
               <FiBarChart2 className="text-4xl" />
             </CardDataStats>
@@ -155,7 +156,7 @@ const AuditorDashboard: React.FC = () => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <DepartemenList departementList={data?.departemen_list} />
+          <DepartemenList deptAuditedNotResponded={data?.departemen_list} />
         </Transition>
       </div>
     </DefaultLayout>

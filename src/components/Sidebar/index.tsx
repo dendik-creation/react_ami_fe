@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import SidebarLinkGroup from './SidebarLinkGroup';
-import Logo from '../../images/logo/logo.svg';
-import { FiGrid, FiX } from 'react-icons/fi';
+import { FiExternalLink, FiGithub, FiGrid, FiLink, FiX } from 'react-icons/fi';
 import navsRole from '../../utils/navsRole';
 import { credential } from '../../utils/constant';
 
@@ -80,8 +79,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   return (
     <aside
       ref={sidebar}
-      className={`absolute left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden bg-black duration-300 ease-linear dark:bg-boxdark lg:static lg:translate-x-0 ${
-        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+      className={`absolute left-0 transition-all top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden bg-black duration-300 ease-linear dark:bg-boxdark lg:static lg:translate-x-0 ${
+        sidebarOpen ? 'translate-x-0 ease-out' : '-translate-x-full ease-in-out'
       }`}
     >
       {/* <!-- SIDEBAR HEADER --> */}
@@ -106,7 +105,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
       </div>
       {/* <!-- SIDEBAR HEADER --> */}
 
-      <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
+      <div className="no-scrollbar relative flex flex-col overflow-y-auto duration-300 ease-linear">
         {/* <!-- Sidebar Menu --> */}
         <nav className="mt-5 py-4 px-4 lg:px-6">
           {/* <!-- Menu Group --> */}
@@ -230,6 +229,16 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
           </div>
         </nav>
         {/* <!-- Sidebar Menu --> */}
+
+        <div className="fixed bottom-8 left-8 flex items-center gap-6">
+          {/* <NavLink to={'https://github.com/dendik-creation'} target="_blank">
+            <FiGithub className="text-slate-500 text-3xl transition-all hover:text-slate-50" />
+          </NavLink> */}
+          <div className="text-slate-400">
+            <div className="text-md font-semibold">ISO</div>
+            <div className="text-sm">{credential?.meta?.kode_iso}</div>
+          </div>
+        </div>
       </div>
     </aside>
   );

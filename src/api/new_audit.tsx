@@ -75,7 +75,11 @@ export const api = {
 
 export const parentNewAudit = {
   collectDataReadySubmit(header: HeaderData, detail: DetailData[] | any) {
-    const headerEdited = header;
+    const headerEdited = {
+      ...header,
+      periode: detailAudit.whatPeriode(new Date().getMonth() + 1),
+      end_at: detail[0]?.tanggal_target,
+    };
     let detailEdited: any = [];
     if (detail?.length > 0 && detail[0]?.judul_clausul_id != null) {
       detailEdited = detail?.map((item: any) => {
@@ -91,7 +95,6 @@ export const parentNewAudit = {
           status: item?.status,
           temuan: item?.temuan,
           jenis_temuan: item?.jenis_temuan?.value ?? null,
-          periode: detailAudit.whatPeriode(new Date().getMonth() + 1),
         };
       });
     } else {

@@ -7,9 +7,10 @@ const Header = (props: {
 }) => {
   return (
     <header className="sticky top-0 z-999 flex w-full bg-white shadow-md">
-      <div className="flex flex-grow items-center justify-between lg:justify-end px-4 py-4 md:px-6 2xl:px-11">
-        <div className="flex justify-end items-center gap-2 sm:gap-4 lg:hidden">
+      <div className="flex flex-grow items-center justify-between px-4 py-4 md:px-6 2xl:px-11">
+        <div className="flex justify-end items-center gap-5 sm:gap-4">
           {/* <!-- Hamburger Toggle BTN --> */}
+          <img src="/img/pura-icon.png" className="w-14 h-14" />
           <button
             aria-controls="sidebar"
             onClick={(e) => {
@@ -52,7 +53,6 @@ const Header = (props: {
           </button>
           {/* <!-- Hamburger Toggle BTN --> */}
         </div>
-
         <div className="flex items-center justify-end gap-3 2xsm:gap-7">
           {/* <!-- User Area --> */}
           <DropdownUser />

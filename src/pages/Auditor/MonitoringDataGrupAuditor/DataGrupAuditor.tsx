@@ -7,6 +7,7 @@ import Breadcrumb from '../../../components/Breadcrumbs/Breadcrumb';
 import { api } from '../../../api/grup_auditor';
 import { GrupAuditor, GrupAuditorList } from './GrupAuditorInterface';
 import { FiChevronLeft, FiChevronRight, FiEye } from 'react-icons/fi';
+import LoadFetch from '../../../common/Loader/LoadFetch';
 const DataGrupAuditor: React.FC = () => {
   const [grupList, setGrups] = useState<GrupAuditorList>();
   const [detailGrup, setDetailGrup] = useState<GrupAuditor>();
@@ -55,7 +56,7 @@ const DataGrupAuditor: React.FC = () => {
           leaveTo="opacity-0"
           className="w-full h-full flex justify-center items-center"
         >
-          <l-bouncy size={100} speed={1.5} color={'#191970'} />
+          <LoadFetch />{' '}
         </Transition>
         <div className="mb-12">
           <Transition

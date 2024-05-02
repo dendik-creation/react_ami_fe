@@ -93,4 +93,29 @@ export const api = {
       console.log(error);
     }
   },
+
+  // Auditee
+  async myAuditListAsAuditee(
+    setLoading: React.Dispatch<React.SetStateAction<boolean>>,
+    page: number = 1,
+    setPaginating: React.Dispatch<React.SetStateAction<boolean>>,
+  ) {
+    try {
+      const response = await axiosInstance.get(
+        `monitoring/histori-audit?page=${page}`,
+        {
+          headers: {
+            Authorization: token,
+          },
+        },
+      );
+      await setTimeout(() => {
+        setLoading(false);
+        setPaginating(false);
+      }, 250);
+      return response.data;
+    } catch (error) {
+      await console.info(error);
+    }
+  },
 };

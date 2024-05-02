@@ -54,7 +54,7 @@ const DeptHistory: React.FC<DeptHistoryI> = ({
                     {
                       historyAudit[0]?.auditee?.user?.departemen?.unit
                         ?.nama_unit
-                    }
+                    }{' '}
                   </Dialog.Title>
 
                   {/* Content */}
@@ -81,8 +81,8 @@ const DeptHistory: React.FC<DeptHistoryI> = ({
                                         detail?.kategori == 'mayor'
                                           ? 'bg-red-200'
                                           : detail?.kategori == 'minor'
-                                          ? 'bg-orange:200'
-                                          : 'bg-green-200'
+                                          ? 'bg-yellow-200'
+                                          : 'bg-blue-200'
                                       }`}
                                       key={detailIndex}
                                     >

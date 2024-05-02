@@ -1,9 +1,13 @@
 import {
+  Auditee,
   Clausul,
+  Departemen,
+  Iso,
   JudulClausul,
   SubClausul,
   SubDepartemen,
 } from '../../../types/AuditListInterface';
+import { GrupAuditor } from '../MonitoringDataGrupAuditor/GrupAuditorInterface';
 
 export interface NewAuditType {
   header_audit: HeaderData;
@@ -11,26 +15,35 @@ export interface NewAuditType {
 }
 
 export interface HeaderData {
+  id?: any;
   no_plpp: string;
+  is_responded?: number | boolean;
   grup_auditor_id: number | null;
   auditee_id: number | null;
   iso_id: number | null;
   departemen_id: number | null;
   temuan_audit: string;
+  departemen?: Departemen;
+  iso?: Iso;
+  auditee?: Auditee;
+  historyCount?: number | null;
+  grup_auditor?: GrupAuditor;
+  periode: number;
+  end_at?: any;
+  detail_audit?: DetailData[];
 }
 
 export interface HeaderOfAudit {
   getData: any;
   loading: boolean;
   header: HeaderData;
-  detail: DetailData[];
   setHeader: React.Dispatch<React.SetStateAction<HeaderData>>;
-  setDetail: React.Dispatch<React.SetStateAction<DetailData[]>>;
   setSubDepts: React.Dispatch<React.SetStateAction<[]>>;
   setPihakTerlibat: React.Dispatch<React.SetStateAction<any>>;
 }
 
 export interface DetailData {
+  id?: number;
   judul_clausul_id: number | null;
   clausul_id: number | null;
   sub_clausul_id: number | null;
@@ -39,10 +52,12 @@ export interface DetailData {
   tanggal_target: string | number | any;
   tanggal_realisasi?: string | number | any;
   kategori: string;
-  jenis_temuan: string;
+  jenis_temuan: {
+    value: string;
+    label: string;
+  };
   status: string;
   temuan: string;
-  periode: number;
   analisa?: string;
   tindakan?: string;
 
@@ -74,6 +89,7 @@ export interface GetData {
 
 export interface DetailOfAudit {
   detail: DetailData[];
+  header: HeaderData;
   getData: GetData;
   subDepts: [] | any;
   setDetail: React.Dispatch<React.SetStateAction<DetailData[]>>;

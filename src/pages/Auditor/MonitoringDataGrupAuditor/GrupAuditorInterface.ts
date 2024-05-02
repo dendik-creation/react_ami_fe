@@ -1,9 +1,27 @@
+import { User } from '../../../types/AuditListInterface';
+
 export interface GrupAuditor {
   id: number | null;
   nama_grup: string;
   jumlah_anggota?: number | null;
-  auditor_list: [] | null;
-  auditor?: [] | null | undefined;
+  auditor_list?:
+    | {
+        id: number;
+        user_id: number;
+        grup_auditor_id: number;
+        keanggotaan: string;
+        status: string;
+        user?: User;
+      }[]
+    | null;
+  auditor?: {
+    id: number;
+    user_id: number;
+    grup_auditor_id: number;
+    keanggotaan: string;
+    status: string;
+    user?: User;
+  };
 }
 
 export interface GrupAuditorList {

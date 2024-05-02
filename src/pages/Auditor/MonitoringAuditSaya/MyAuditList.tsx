@@ -5,14 +5,18 @@ import { Transition } from '@headlessui/react';
 import { HeaderData } from '../NewAudit/NewAuditInterface';
 import { api } from '../../../api/my_audits';
 import {
+  FiCheckCircle,
   FiChevronLeft,
   FiChevronRight,
   FiEye,
   FiPenTool,
   FiTrash2,
+  FiXCircle,
 } from 'react-icons/fi';
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 import ConfirmDelete from '../../../components/Modal/ConfirmDelete';
+import LoadFetch from '../../../common/Loader/LoadFetch';
+import { parseDateHaha } from '../../../api/date_parser';
 
 interface metaPagination {
   current_page: number;
@@ -63,9 +67,9 @@ const MyAuditList: React.FC = () => {
 
   const handleDetail = (header_id: number, action: string) => {
     if (action == 'detail') {
-      navigate(`/monitoring/my-audit/detail/${header_id}`);
+      navigate(`/monitoring/audit/detail/${header_id}`);
     } else if (action == 'edit') {
-      navigate(`/monitoring/my-audit/edit/${header_id}`);
+      navigate(`/monitoring/audit/edit/${header_id}`);
     }
   };
 
@@ -104,7 +108,7 @@ const MyAuditList: React.FC = () => {
         leaveTo="opacity-0"
         className="w-full h-full flex justify-center items-center"
       >
-        <l-bouncy size={100} speed={1.5} color={'#191970'} />
+        <LoadFetch />
       </Transition>
       <div className="mb-12">
         <Transition
@@ -163,6 +167,15 @@ const MyAuditList: React.FC = () => {
                     <th className="min-w-[150px] p-3 font-medium text-white">
                       Dept Auditee
                     </th>
+                    <th className="min-w-[150px] p-3 font-medium text-white">
+                      Tanggal Target
+                    </th>
+                    <th className="min-w-[150px] p-3 font-medium text-white">
+                      Status Audit
+                    </th>
+                    <th className="min-w-[150px] p-3 font-medium text-white">
+                      Status Respon
+                    </th>
                     <th className="p-3 font-medium text-white">Actions</th>
                   </tr>
                 </thead>
@@ -174,7 +187,7 @@ const MyAuditList: React.FC = () => {
                       </td>
                     </tr>
                   ) : (
-                    audits?.my_audits.map((item: any, index: number) => (
+                    audits?.my_audits.map((item: HeaderData, index: number) => (
                       <tr key={index}>
                         <td className="border-b border-[#eee] dark:border-strokedark p-3">
                           <h5 className="font-medium text-black dark:text-white">
@@ -215,6 +228,39 @@ const MyAuditList: React.FC = () => {
                           </h5>
                         </td>
                         <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                          <h5 className="font-medium text-black dark:text-white">
+                            {item?.end_at ? parseDateHaha(item?.end_at) : '-'}
+                          </h5>
+                        </td>
+                        <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                          <h5 className="font-medium text-black dark:text-white">
+                            {new Date() <= new Date(item?.end_at) &&
+                            !item?.is_responded ? (
+                              <span className="rounded-md px-2 bg-lime-300 py-1">
+                                Open
+                              </span>
+                            ) : new Date() <= new Date(item?.end_at) &&
+                              item?.is_responded ? (
+                              <span className="rounded-md px-2 bg-red-300 py-1">
+                                Close
+                              </span>
+                            ) : (
+                              <span className="rounded-md px-2 bg-lime-300 py-1">
+                                Close
+                              </span>
+                            )}
+                          </h5>
+                        </td>
+                        <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                          <h5 className="font-medium text-black dark:text-white">
+                            {item?.is_responded ? (
+                              <FiCheckCircle className="text-lime-500 text-2xl" />
+                            ) : (
+                              <FiXCircle className="text-red-500 text-2xl" />
+                            )}
+                          </h5>
+                        </td>
+                        <td className="border-b border-[#eee] dark:border-strokedark p-3">
                           <div className="flex justify-start items-center gap-2">
                             <button
                               onClick={() => handleDetail(item?.id, 'detail')}
@@ -223,21 +269,30 @@ const MyAuditList: React.FC = () => {
                               <FiEye className="" />
                               <span className="font-medium">Detail</span>
                             </button>
-                            <button
-                              disabled
-                              onClick={() => handleDetail(item?.id, 'edit')}
-                              className="flex disabled:opacity-20 text-white bg-yellow-500 px-2.5 py-1.5 rounded-md justify-start items-center gap-3 hover:bg-yellow-800 transition-all"
-                            >
-                              <FiPenTool className="" />
-                              <span className="font-medium">Edit</span>
-                            </button>
-                            <button
-                              onClick={() => handleRemove(item?.id)}
-                              className="flex text-white bg-red-500 px-2.5 py-1.5 rounded-md justify-start items-center gap-3 hover:bg-red-800 transition-all"
-                            >
-                              <FiTrash2 className="" />
-                              <span className="font-medium">Hapus</span>
-                            </button>
+                            {new Date() < new Date(item?.end_at) ? (
+                              <button
+                                disabled
+                                onClick={() => handleDetail(item?.id, 'edit')}
+                                className="flex disabled:opacity-20 text-white bg-yellow-500 px-2.5 py-1.5 rounded-md justify-start items-center gap-3 hover:bg-yellow-800 transition-all"
+                              >
+                                <FiPenTool className="" />
+                                <span className="font-medium">Edit</span>
+                              </button>
+                            ) : (
+                              ''
+                            )}
+                            {new Date() <= new Date(item?.end_at) &&
+                            !item?.is_responded ? (
+                              <button
+                                onClick={() => handleRemove(item?.id)}
+                                className="flex text-white bg-red-500 px-2.5 py-1.5 rounded-md justify-start items-center gap-3 hover:bg-red-800 transition-all"
+                              >
+                                <FiTrash2 className="" />
+                                <span className="font-medium">Hapus</span>
+                              </button>
+                            ) : (
+                              ''
+                            )}
                           </div>
                         </td>
                       </tr>
@@ -247,7 +302,7 @@ const MyAuditList: React.FC = () => {
               </table>
 
               {/* Meta Paginate */}
-              <div className="m-2">
+              <div className="m-2 sticky left-0">
                 <nav className="flex justify-between items-center">
                   <ul className="flex flex-wrap items-center gap-3">
                     <li>

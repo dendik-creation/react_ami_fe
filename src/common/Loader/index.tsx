@@ -4,8 +4,10 @@ zoomies.register();
 
 const Loader = () => {
   return (
-    <div className="flex h-screen gap-8 items-center flex-col justify-center bg-white">
-      <l-zoomies size="200" stroke={10} speed="1" color="#191970" />
+    <div className="flex h-screen relative items-center justify-center bg-white">
+      <div className="rotate-90">
+        <l-zoomies size="300" speed={1} stroke={200} color="#191970" />
+      </div>
     </div>
   );
 };

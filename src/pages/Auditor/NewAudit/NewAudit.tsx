@@ -16,6 +16,7 @@ import {
 } from './NewAuditInterface';
 import ConfirmSubmit from './components/ConfirmSubmit';
 import { useNavigate } from 'react-router-dom';
+import LoadFetch from '../../../common/Loader/LoadFetch';
 
 const NewAudit: React.FC = () => {
   const [data, setData] = useState<NewAuditType>({
@@ -79,11 +80,11 @@ const NewAudit: React.FC = () => {
       .catch((err) => console.log(err));
   }, []);
 
-  useEffect(() => {
-    console.log(header);
-    console.log(detail);
-    console.log(data);
-  }, [header, detail, data]);
+  // useEffect(() => {
+  //   console.log(header);
+  //   console.log(detail);
+  //   console.log(data);
+  // }, [header, detail, data]);
 
   const handleSubmit = async (
     e: FormEvent<HTMLFormElement>,
@@ -122,7 +123,7 @@ const NewAudit: React.FC = () => {
         leaveTo="opacity-0"
         className="w-full h-full flex justify-center items-center"
       >
-        <l-bouncy size={100} speed={1.5} color={'#191970'} />
+        <LoadFetch />
       </Transition>
       <div className="mb-6">
         <Transition
@@ -143,10 +144,8 @@ const NewAudit: React.FC = () => {
             getData={getData}
             loading={loading}
             header={header}
-            detail={detail}
             setSubDepts={setSubDepts}
             setHeader={setHeader}
-            setDetail={setDetail}
             setPihakTerlibat={setPihakTerlibat}
           />
           {/* <PihakYangTerlibat loading={loading} pihakTerlibat={pihakTerlibat} /> */}
@@ -155,6 +154,7 @@ const NewAudit: React.FC = () => {
             <DetailAudit
               loading={loading}
               getData={getData}
+              header={header}
               detail={detail}
               subDepts={subDepts}
               setDetail={setDetail}
@@ -172,7 +172,7 @@ const NewAudit: React.FC = () => {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
             as="button"
-            className="inline-flex mb-8 mt-2 rounded-md w-full items-center justify-center gap-2.5 bg-primary py-4 px-10 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10"
+            className="inline-flex mb-8 mt-16 rounded-md w-full items-center justify-center gap-2.5 bg-primary py-4 px-10 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10"
           >
             <FiSave className="text-3xl" />
             <span className="text-2xl">Sumbit</span>

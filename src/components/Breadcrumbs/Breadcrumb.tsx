@@ -13,7 +13,7 @@ const Breadcrumb = ({ pageName, description }: BreadcrumbProps) => {
     navigate(-1);
   };
   return (
-    <div className="mb-6 flex items-center justify-start gap-3">
+    <div className="mb-6 flex items-center justify-start gap-5">
       {pathname != '/' ? (
         <button
           onClick={handleBack}

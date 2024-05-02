@@ -5,13 +5,14 @@ import toastFire from '../hooks/toastFire';
 interface Credential {
   username: string;
   password: string;
-  role: string;
   iso_id: string;
 }
 
 interface Transition {
   show: boolean;
   loading: boolean;
+  loadReadyDashboard: boolean;
+  isSelectRole: boolean;
 }
 
 export const login = async (
@@ -23,20 +24,53 @@ export const login = async (
     if (response.status == 200) {
       await localStorage.setItem('credentials', JSON.stringify(response.data));
       await toastFire({
-        message: `Login Sebagai ${response.data.meta.active_role.toUpperCase()}`,
+        message: `Pilih Akses Masuk`,
       });
-      await setTimeout(() => {
-        window.location.href = '/';
-      }, 1000);
     }
+    await setTransition((prev: Transition) => ({
+      ...prev,
+      show: false,
+      isSelectRole: true,
+    }));
+    return response.data;
   } catch (error: any) {
     toastFire({
       message: error.response.data.message,
       status: false,
     });
   } finally {
-    await setTransition((prev: Transition) => ({ ...prev, loading: false }));
+    await setTransition((prev: Transition) => ({
+      ...prev,
+      loading: false,
+    }));
   }
+};
+
+const setLevelRole = (role: string) => {
+  switch (role) {
+    case 'auditee':
+      return 1;
+      break;
+    case 'auditor':
+      return 2;
+      break;
+    case 'pdd':
+      return 3;
+      break;
+    case 'management':
+      return 4;
+      break;
+  }
+};
+
+export const activeRoleSelected = (selectedRole: string) => {
+  const updateActiveRole = JSON.parse(localStorage.getItem('credentials'));
+  updateActiveRole.meta.active_role = selectedRole;
+  updateActiveRole.meta.level_role = setLevelRole(selectedRole);
+  localStorage.setItem('credentials', JSON.stringify(updateActiveRole));
+  setTimeout(() => {
+    window.location.href = '/';
+  }, 1000);
 };
 
 export const logout = async (

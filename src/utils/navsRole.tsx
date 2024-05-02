@@ -3,7 +3,7 @@ import {
   FiMessageCircle,
   FiMonitor,
   FiPlusSquare,
-  FiServer,
+  FiCloud,
   FiUnlock,
 } from 'react-icons/fi';
 
@@ -23,8 +23,8 @@ const navsRole = [
       isGrup: true,
       lists: [
         {
-          name: 'Data Auditor',
-          url: '/monitoring/auditor',
+          name: 'Data Grup Auditor',
+          url: '/monitoring/grup-auditor',
         },
         {
           name: 'Histori Audit Saya',
@@ -67,34 +67,39 @@ const navsRole = [
       lists: [
         {
           name: 'Data User',
-          url: '/master/users',
+          url: '/master/user',
         },
         {
           name: 'Data Clausul',
-          url: '/master/clausuls',
+          url: '/master/clausul',
         },
         {
           name: 'Data Grup Auditor',
           url: '/master/grup-auditor',
         },
+        {
+          name: 'Data ISO',
+          url: '/master/iso',
+        },
+        {
+          name: 'Data Departemen',
+          url: '/master/departemen',
+        },
+        {
+          name: 'Data Unit',
+          url: '/master/unit',
+        },
       ],
     },
     {
-      name: 'Histori Audit',
-      icon: <FiServer />,
-      url: '/history-audit',
+      name: 'Histori Seluruh Audit',
+      icon: <FiCloud />,
+      url: '/history-all-audit',
       isGrup: false,
       lists: [],
     },
   ],
   [
-    {
-      name: 'Pengaruhi Audit',
-      url: '/audit-effect',
-      isGrup: false,
-      icon: <FiUnlock />,
-      lists: [],
-    },
     {
       name: 'Master Data',
       icon: <FiDatabase />,
@@ -103,22 +108,43 @@ const navsRole = [
       lists: [
         {
           name: 'Data User',
-          url: '/master/users',
+          url: '/master/user',
         },
         {
           name: 'Data Clausul',
-          url: '/master/clausuls',
+          url: '/master/clausul',
         },
         {
           name: 'Data Grup Auditor',
           url: '/master/grup-auditor',
         },
+        {
+          name: 'Data ISO',
+          url: '/master/iso',
+        },
+        {
+          name: 'Data Departemen',
+          url: '/master/departemen',
+        },
+        {
+          name: 'Data Unit',
+          url: '/master/unit',
+        },
       ],
     },
     {
-      name: 'Histori Audit',
-      url: '/history-audit',
+      name: 'Perpanjang Audit',
+      url: '/perpanjang-audit',
       isGrup: false,
+      icon: <FiUnlock />,
+      lists: [],
+    },
+
+    {
+      name: 'Histori Seluruh Audit',
+      url: '/history-all-audit',
+      isGrup: false,
+      icon: <FiCloud />,
       lists: [],
     },
   ],

@@ -3,7 +3,7 @@ import React, { useEffect, ChangeEvent, useState } from 'react';
 import ReactSelect from 'react-select';
 import { api, headerAudit } from '../../../../api/new_audit';
 import { HeaderOfAudit } from '../NewAuditInterface';
-import 'ldrs/leapfrog';
+import 'ldrs/zoomies';
 import toastFire from '../../../../hooks/toastFire';
 import { FiExternalLink } from 'react-icons/fi';
 import DeptHistory from './DeptHistory';
@@ -13,9 +13,7 @@ const HeaderAudit: React.FC<HeaderOfAudit> = ({
   getData,
   loading,
   header,
-  detail,
   setHeader,
-  setDetail,
   setSubDepts,
   setPihakTerlibat,
 }) => {
@@ -35,36 +33,6 @@ const HeaderAudit: React.FC<HeaderOfAudit> = ({
       ...prevState,
       [name]: value,
     }));
-  };
-
-  useEffect(() => {
-    console.log(historyAudit);
-  }, [historyAudit]);
-
-  const setJenisTemuan = (historyCount: number) => {
-    if (historyCount > 0) {
-      const jenisTemuanSet = detail?.map((item: any) => {
-        return {
-          ...item,
-          jenis_temuan: {
-            label: 'Repeat',
-            value: 'repeat',
-          },
-        };
-      });
-      setDetail(jenisTemuanSet);
-    } else {
-      const jenisTemuanSet = detail?.map((item: any) => {
-        return {
-          ...item,
-          jenis_temuan: {
-            label: 'New',
-            value: 'new',
-          },
-        };
-      });
-      setDetail(jenisTemuanSet);
-    }
   };
 
   const handleSelect = async (e: any, type: string) => {
@@ -106,15 +74,16 @@ const HeaderAudit: React.FC<HeaderOfAudit> = ({
         .then((res: any) => {
           setHeader((prev) => ({
             ...prev,
+            historyCount: res?.length,
             no_plpp: headerAudit.generatePlpp(e, res?.length),
           }));
           setHistoryAudit(res);
-          setJenisTemuan(res?.length);
           setHistoryModal({ ...historyModal, toaster: true });
         })
         .catch((err: any) => {
           setHeader((prev) => ({
             ...prev,
+            historyCount: 0,
             no_plpp: headerAudit.generatePlpp(e, 0),
           }));
           setHistoryAudit([]);
@@ -223,8 +192,8 @@ const HeaderAudit: React.FC<HeaderOfAudit> = ({
                 className="w-full rounded-md border-[1.5px] border-stroke bg-transparent px-3 py-2 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:text-opacity-0 disabled:bg-slate-100 dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
               />
               {header?.no_plpp == 'Membuat PLPP' ? (
-                <div className="absolute top-12 left-5">
-                  <l-leapfrog size={30} speed={1.4} color={'#1c1c1c'} />
+                <div className="absolute top-11 left-5">
+                  <l-zoomies size={100} speed={1} color={'#1c1c1c'} />
                 </div>
               ) : (
                 ''
