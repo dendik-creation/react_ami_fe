@@ -8,10 +8,11 @@ export const api = {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>,
     page: number = 1,
     setPaginating: React.Dispatch<React.SetStateAction<boolean>>,
+    search?: string,
   ) {
     try {
       const response = await axiosInstance.get(
-        `master-data/data-user?page=${page}`,
+        `master-data/data-user?page=${page}&search=${search ?? ''}`,
         {
           headers: {
             Authorization: token,
@@ -144,7 +145,7 @@ export const api = {
     } catch (error: any) {
       setSubmitting(false);
       toastFire({
-        message: error.response.message,
+        message: error.response.data.message,
         status: false,
       });
     } finally {

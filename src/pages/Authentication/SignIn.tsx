@@ -108,7 +108,7 @@ const SignIn: React.FC = () => {
     });
   };
   return (
-    <div className="w-[100vw] h-[100vh] overflow-hidden bg-blue-300 flex justify-center items-center">
+    <div className="w-[100vw] h-[100vh] overflow-hidden bg-white flex justify-center items-center">
       <Transition
         show={transition.show}
         enter="transform transition duration-300"
@@ -117,9 +117,9 @@ const SignIn: React.FC = () => {
         leave="transform duration-300 transition"
         leaveFrom="opacity-100 scale-100"
         leaveTo="opacity-0 scale-95"
-        className={`flex flex-wrap md:bg-opacity-25 md:backdrop-filter md:backdrop-blur-lg items-center overflow-hidden md:px-18 px-6 py-6 md:py-0 w-full mx-4 md:w-3/4 md:mx-0 bg-white rounded-lg shadow-default`}
+        className={`flex flex-wrap md:bg-opacity-25 md:backdrop-filter md:backdrop-blur-lg items-center overflow-hidden md:px-18 px-6 py-6 md:py-0 w-full mx-4 md:w-3/4 md:mx-0 bg-blue-300 rounded-lg shadow-default`}
       >
-        <div className="hidden w-full xl:block xl:w-1/2">
+        <div className="hidden w-full xl:block xl:w-1/2 -z-10">
           <div className="py-17.5 px-26 text-center">
             {/* <p className="2xl:px-20 text-3xl font-bold text-slate-700">
               Sistem Audit Mutu Internal Pura
@@ -128,7 +128,7 @@ const SignIn: React.FC = () => {
               <img
                 src="/img/log-in.svg"
                 alt=""
-                className="w-full h-full -translate-x-8 scale-[2.5]"
+                className="w-full h-full bg-gradient-to-r from-blue-400 to-blue-200/0 -translate-x-8 scale-[2.5]"
               />
             </center>
           </div>
@@ -143,7 +143,7 @@ const SignIn: React.FC = () => {
           leave="transform duration-300 transition"
           leaveFrom="opacity-100 scale-100"
           leaveTo="opacity-0 scale-95"
-          className="w-full xl:w-1/2 "
+          className="w-full xl:w-1/2 z-99"
         >
           <div className="w-full p-4 sm:p-12.5 xl:p-17.5">
             <h2 className="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2">

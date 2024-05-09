@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import DefaultLayout from '../../../layout/DefaultLayout';
 import { Transition } from '@headlessui/react';
 import Breadcrumb from '../../../components/Breadcrumbs/Breadcrumb';
@@ -9,12 +9,14 @@ import {
   FiEye,
   FiPenTool,
   FiPlusSquare,
+  FiSearch,
   FiTrash,
 } from 'react-icons/fi';
 import LoadFetch from '../../../common/Loader/LoadFetch';
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 import ConfirmDelete from '../../../components/Modal/ConfirmDelete';
 import { Departemen, MetaPaginate } from '../../../types/AuditListInterface';
+import TableFilteringReal from '../../../common/Loader/TableFilteringReal';
 
 interface MaserDeptInterface {
   total_dept: number;
@@ -32,6 +34,7 @@ const MasterDepartemen: React.FC = () => {
 
   const [loading, setLoading] = useState<boolean>(true);
   const [isPaginating, setPaginating] = useState<boolean>(false);
+  const [search, setSearch] = useState<string>('');
 
   useEffect(() => {
     api
@@ -51,6 +54,26 @@ const MasterDepartemen: React.FC = () => {
     setIdDel(id);
     setShowModal(true);
   };
+
+  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+  };
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (search.length >= 2) {
+        setPaginating(true);
+        api
+          .departemenAll(setLoading, 1, setPaginating, search)
+          .then((res) => setDeptList(res));
+      } else if (search.length == 0) {
+        setPaginating(true);
+        api
+          .departemenAll(setLoading, 1, setPaginating, search)
+          .then((res) => setDeptList(res));
+      }
+    }, 400);
+  }, [search]);
 
   useEffect(() => {
     if (successDelete == true) {
@@ -114,6 +137,30 @@ const MasterDepartemen: React.FC = () => {
             </button>
           </Transition>
 
+          <Transition
+            show={!loading}
+            enter="transform transition duration-300 delay-[100ms]"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="transform duration-300 transition ease-in-out"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+            className="relative mt-4 mb-6 ms-4"
+          >
+            <FiSearch className="absolute h-full flex items-center text-slate-600 -top-0.5 text-lg" />
+            <input
+              type="search"
+              name="search"
+              autoComplete="off"
+              id="search"
+              required
+              value={search}
+              onChange={handleSearch}
+              placeholder="Cari Berdasarkan Nama Departemen"
+              className="w-full font-semibold text-slate-600 rounded-sm border-b-2 ps-9 bg-transparent px-3 py-2 outline-none focus:border-blue-500 border-slate-500"
+            />
+          </Transition>
+
           {/* Grup Auditor List */}
           <Transition
             show={!loading}
@@ -153,72 +200,76 @@ const MasterDepartemen: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {isPaginating ? (
-                      <tr>
-                        <td className="text-center w-full p-6" colSpan={7}>
-                          <l-bouncy size={50} color={'#36454F'} />
-                        </td>
-                      </tr>
-                    ) : (
-                      deptList?.data?.data?.map(
-                        (item: Departemen, index: number) => (
-                          <tr key={index}>
-                            <td className="border-b border-[#eee] dark:border-strokedark p-3">
-                              <h5 className="font-medium text-black dark:text-white">
-                                {index + 1}
-                              </h5>
-                            </td>
-                            <td className="border-b border-[#eee] dark:border-strokedark p-3">
-                              <h5 className="font-medium text-black dark:text-white">
-                                {item?.kode}
-                              </h5>
-                            </td>
-                            <td className="border-b border-[#eee] dark:border-strokedark p-3">
-                              <h5 className="font-medium text-black dark:text-white">
-                                {item?.nama_departemen}
-                              </h5>
-                            </td>
-                            <td className="border-b border-[#eee] dark:border-strokedark p-3">
-                              <h5 className="font-medium text-black dark:text-white">
-                                {item?.ekstensi}
-                              </h5>
-                            </td>
-                            <td className="border-b border-[#eee] dark:border-strokedark p-3">
-                              <h5 className="font-medium text-black dark:text-white">
-                                {item?.sub_departemen_count}
-                              </h5>
-                            </td>
-                            <td className="border-b border-[#eee] dark:border-strokedark p-3">
-                              <h5 className="font-medium text-black dark:text-white">
-                                {item?.unit?.nama_unit}
-                              </h5>
-                            </td>
-                            <td className="border-b border-[#eee] dark:border-strokedark p-3">
-                              <div className="flex justify-start items-center gap-3">
-                                <button
-                                  onClick={() =>
-                                    navigate(
-                                      `/master/departemen/edit/${item?.id}`,
-                                    )
-                                  }
-                                  className="flex text-white bg-blue-500 px-2.5 py-1.5 rounded-md justify-start items-center gap-3 hover:bg-blue-800 transition-all"
-                                >
-                                  <FiPenTool className="" />
-                                  <span className="font-medium">Edit</span>
-                                </button>
-                                <button
-                                  onClick={() => handleRemove(item?.id)}
-                                  className="flex text-white bg-red-500 px-2.5 py-1.5 rounded-md justify-start items-center gap-3 hover:bg-red-800 transition-all"
-                                >
-                                  <FiTrash className="" />
-                                  <span className="font-medium">Hapus</span>
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        ),
-                      )
-                    )}
+                    {isPaginating
+                      ? Array(3)
+                          .fill([])
+                          .map((basoka: any, theindex: number) => (
+                            <tr key={theindex}>
+                              {Array(7)
+                                .fill([])
+                                .map((aduhai: any, auindex: number) => (
+                                  <TableFilteringReal key={auindex} />
+                                ))}
+                            </tr>
+                          ))
+                      : deptList?.data?.data?.map(
+                          (item: Departemen, index: number) => (
+                            <tr key={index}>
+                              <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                                <h5 className="font-medium text-black dark:text-white">
+                                  {index + 1}
+                                </h5>
+                              </td>
+                              <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                                <h5 className="font-medium text-black dark:text-white">
+                                  {item?.kode}
+                                </h5>
+                              </td>
+                              <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                                <h5 className="font-medium text-black dark:text-white">
+                                  {item?.nama_departemen}
+                                </h5>
+                              </td>
+                              <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                                <h5 className="font-medium text-black dark:text-white">
+                                  {item?.ekstensi}
+                                </h5>
+                              </td>
+                              <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                                <h5 className="font-medium text-black dark:text-white">
+                                  {item?.sub_departemen_count}
+                                </h5>
+                              </td>
+                              <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                                <h5 className="font-medium text-black dark:text-white">
+                                  {item?.unit?.nama_unit}
+                                </h5>
+                              </td>
+                              <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                                <div className="flex justify-start items-center gap-3">
+                                  <button
+                                    onClick={() =>
+                                      navigate(
+                                        `/master/departemen/edit/${item?.id}`,
+                                      )
+                                    }
+                                    className="flex text-white bg-blue-500 px-2.5 py-1.5 rounded-md justify-start items-center gap-3 hover:bg-blue-800 transition-all"
+                                  >
+                                    <FiPenTool className="" />
+                                    <span className="font-medium">Edit</span>
+                                  </button>
+                                  <button
+                                    onClick={() => handleRemove(item?.id)}
+                                    className="flex text-white bg-red-500 px-2.5 py-1.5 rounded-md justify-start items-center gap-3 hover:bg-red-800 transition-all"
+                                  >
+                                    <FiTrash className="" />
+                                    <span className="font-medium">Hapus</span>
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ),
+                        )}
                   </tbody>
                 </table>
 

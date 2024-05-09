@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import DefaultLayout from '../../../layout/DefaultLayout';
 import { Transition } from '@headlessui/react';
 import Breadcrumb from '../../../components/Breadcrumbs/Breadcrumb';
@@ -8,6 +8,7 @@ import {
   FiChevronRight,
   FiPenTool,
   FiPlusSquare,
+  FiSearch,
   FiTrash,
 } from 'react-icons/fi';
 import LoadFetch from '../../../common/Loader/LoadFetch';
@@ -15,6 +16,7 @@ import { NavigateFunction, useNavigate } from 'react-router-dom';
 import ConfirmDelete from '../../../components/Modal/ConfirmDelete';
 import EditModal from './components/EditModal';
 import CreateModal from './components/CreateModal';
+import TableFilteringReal from '../../../common/Loader/TableFilteringReal';
 
 const MasterIso: React.FC = () => {
   const [isoList, setIsoList] = useState<any>();
@@ -35,6 +37,8 @@ const MasterIso: React.FC = () => {
 
   const [loading, setLoading] = useState<boolean>(true);
   const [isPaginating, setPaginating] = useState<boolean>(false);
+
+  const [search, setSearch] = useState<string>('');
 
   useEffect(() => {
     api.isoAll(setLoading, 1, setPaginating).then((res) => setIsoList(res));
@@ -62,9 +66,25 @@ const MasterIso: React.FC = () => {
     setShowEditModal(true);
   };
 
+  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+  };
+
   useEffect(() => {
-    console.log(isoSelected);
-  }, [isoSelected]);
+    setTimeout(() => {
+      if (search.length > 3) {
+        setPaginating(true);
+        api
+          .isoAll(setLoading, 1, setPaginating, search)
+          .then((res) => setIsoList(res));
+      } else if (search.length == 0) {
+        setPaginating(true);
+        api
+          .isoAll(setLoading, 1, setPaginating, search)
+          .then((res) => setIsoList(res));
+      }
+    }, 400);
+  }, [search]);
 
   useEffect(() => {
     if (successDelete || successUpdate || successCreate) {
@@ -142,6 +162,30 @@ const MasterIso: React.FC = () => {
             </button>
           </Transition>
 
+          <Transition
+            show={!loading}
+            enter="transform transition duration-300 delay-[100ms]"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="transform duration-300 transition ease-in-out"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+            className="relative mt-4 mb-6 ms-4"
+          >
+            <FiSearch className="absolute h-full flex items-center text-slate-600 -top-0.5 text-lg" />
+            <input
+              type="search"
+              name="search"
+              autoComplete="off"
+              id="search"
+              required
+              value={search}
+              onChange={handleSearch}
+              placeholder="Cari Berdasarkan Kode ISO"
+              className="w-full font-semibold text-slate-600 rounded-sm border-b-2 ps-9 bg-transparent px-3 py-2 outline-none focus:border-blue-500 border-slate-500"
+            />
+          </Transition>
+
           {/* Grup Auditor List */}
           <Transition
             show={!loading}
@@ -172,51 +216,55 @@ const MasterIso: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {isPaginating ? (
-                      <tr>
-                        <td className="text-center w-full p-6" colSpan={7}>
-                          <l-bouncy size={50} color={'#36454F'} />
-                        </td>
-                      </tr>
-                    ) : (
-                      isoList?.iso?.data?.map((item: any, index: number) => (
-                        <tr key={index}>
-                          <td className="border-b border-[#eee] dark:border-strokedark p-3">
-                            <h5 className="font-medium text-black dark:text-white">
-                              {index + 1}
-                            </h5>
-                          </td>
-                          <td className="border-b border-[#eee] dark:border-strokedark p-3">
-                            <h5 className="font-medium text-black dark:text-white">
-                              {item?.kode}
-                            </h5>
-                          </td>
-                          <td className="border-b border-[#eee] dark:border-strokedark p-3">
-                            <h5 className="font-medium text-black dark:text-white">
-                              {item?.many_use} Kali
-                            </h5>
-                          </td>
-                          <td className="border-b border-[#eee] dark:border-strokedark p-3">
-                            <div className="flex justify-start items-center gap-3">
-                              <button
-                                onClick={() => handleEdit(item?.id, index)}
-                                className="flex text-white bg-blue-500 px-2.5 py-1.5 rounded-md justify-start items-center gap-3 hover:bg-blue-800 transition-all"
-                              >
-                                <FiPenTool className="" />
-                                <span className="font-medium">Edit</span>
-                              </button>
-                              <button
-                                onClick={() => handleRemove(item?.id)}
-                                className="flex text-white bg-red-500 px-2.5 py-1.5 rounded-md justify-start items-center gap-3 hover:bg-red-800 transition-all"
-                              >
-                                <FiTrash className="" />
-                                <span className="font-medium">Hapus</span>
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))
-                    )}
+                    {isPaginating
+                      ? Array(3)
+                          .fill([])
+                          .map((basoka: any, theindex: number) => (
+                            <tr key={theindex}>
+                              {Array(4)
+                                .fill([])
+                                .map((aduhai: any, auindex: number) => (
+                                  <TableFilteringReal key={auindex} />
+                                ))}
+                            </tr>
+                          ))
+                      : isoList?.iso?.data?.map((item: any, index: number) => (
+                          <tr key={index}>
+                            <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                              <h5 className="font-medium text-black dark:text-white">
+                                {index + 1}
+                              </h5>
+                            </td>
+                            <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                              <h5 className="font-medium text-black dark:text-white">
+                                {item?.kode}
+                              </h5>
+                            </td>
+                            <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                              <h5 className="font-medium text-black dark:text-white">
+                                {item?.many_use} Kali
+                              </h5>
+                            </td>
+                            <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                              <div className="flex justify-start items-center gap-3">
+                                <button
+                                  onClick={() => handleEdit(item?.id, index)}
+                                  className="flex text-white bg-blue-500 px-2.5 py-1.5 rounded-md justify-start items-center gap-3 hover:bg-blue-800 transition-all"
+                                >
+                                  <FiPenTool className="" />
+                                  <span className="font-medium">Edit</span>
+                                </button>
+                                <button
+                                  onClick={() => handleRemove(item?.id)}
+                                  className="flex text-white bg-red-500 px-2.5 py-1.5 rounded-md justify-start items-center gap-3 hover:bg-red-800 transition-all"
+                                >
+                                  <FiTrash className="" />
+                                  <span className="font-medium">Hapus</span>
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
                   </tbody>
                 </table>
 

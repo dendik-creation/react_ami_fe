@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import DefaultLayout from '../../../layout/DefaultLayout';
 import Breadcrumb from '../../../components/Breadcrumbs/Breadcrumb';
 import { Transition } from '@headlessui/react';
@@ -10,9 +10,12 @@ import {
   FiChevronLeft,
   FiChevronRight,
   FiEye,
+  FiSearch,
 } from 'react-icons/fi';
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 import LoadFetch from '../../../common/Loader/LoadFetch';
+import TableFilteringReal from '../../../common/Loader/TableFilteringReal';
+import { BsFillCheckCircleFill, BsFillXCircleFill } from 'react-icons/bs';
 
 interface metaPagination {
   current_page: number;
@@ -31,6 +34,9 @@ const MyHistoriAudit: React.FC = () => {
   const [audits, setAudits] = useState<AuditsList>();
   const [loading, setLoading] = useState<boolean>(true);
   const [isPaginating, setPaginating] = useState<boolean>(false);
+
+  const [search, setSearch] = useState<string>('');
+
   useEffect(() => {
     api
       .myAuditListAsAuditee(setLoading, 1, setPaginating)
@@ -43,6 +49,26 @@ const MyHistoriAudit: React.FC = () => {
       })
       .catch((err) => console.log(err));
   }, []);
+
+  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+  };
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (search.length > 3) {
+        setPaginating(true);
+        api
+          .myAuditListAsAuditee(setLoading, 1, setPaginating, search)
+          .then((res) => setAudits(res));
+      } else if (search.length == 0) {
+        setPaginating(true);
+        api
+          .myAuditListAsAuditee(setLoading, 1, setPaginating, search)
+          .then((res) => setAudits(res));
+      }
+    }, 400);
+  }, [search]);
 
   const handlePaginate = (target_page: number | any) => {
     setPaginating(true);
@@ -117,6 +143,30 @@ const MyHistoriAudit: React.FC = () => {
           />
         </Transition>
 
+        <Transition
+          show={!loading}
+          enter="transform transition duration-300 delay-[100ms]"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="transform duration-300 transition ease-in-out"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+          className="relative mt-4 mb-6 ms-4"
+        >
+          <FiSearch className="absolute h-full flex items-center text-slate-600 -top-0.5 text-lg" />
+          <input
+            type="search"
+            name="search"
+            autoComplete="off"
+            id="search"
+            required
+            value={search}
+            onChange={handleSearch}
+            placeholder="Cari Berdasarkan No PLPP"
+            className="w-full font-semibold text-slate-600 rounded-sm border-b-2 ps-9 bg-transparent px-3 py-2 outline-none focus:border-blue-500 border-slate-500"
+          />
+        </Transition>
+
         {/* My Audit List */}
         <Transition
           show={!loading}
@@ -140,6 +190,9 @@ const MyHistoriAudit: React.FC = () => {
                     <th className="min-w-[50px] p-3 font-medium text-white">
                       No PLPP
                     </th>
+                    <th className="min-w-[50px] p-3 font-medium text-white">
+                      ISO
+                    </th>
                     <th className="min-w-[120px] p-3 font-medium text-white">
                       Grup Auditor
                     </th>
@@ -159,84 +212,88 @@ const MyHistoriAudit: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {isPaginating ? (
-                    <tr>
-                      <td className="text-center w-full p-6" colSpan={7}>
-                        <l-bouncy size={50} color={'#36454F'} />
-                      </td>
-                    </tr>
-                  ) : (
-                    audits?.my_audits.map((item: any, index: number) => (
-                      <tr key={index}>
-                        <td className="border-b border-[#eee] dark:border-strokedark p-3">
-                          <h5 className="font-medium text-black dark:text-white">
-                            {index + 1}
-                          </h5>
-                        </td>
-                        <td className="border-b border-[#eee] dark:border-strokedark p-3">
-                          <h5 className="font-medium text-black dark:text-white">
-                            {item?.no_plpp}
-                          </h5>
-                        </td>
-                        <td className="border-b border-[#eee] dark:border-strokedark p-3">
-                          <h5 className="font-medium text-black dark:text-white">
-                            {item?.grup_auditor?.nama_grup ?? '-'}
-                          </h5>
-                        </td>
-                        <td className="border-b border-[#eee] dark:border-strokedark p-3">
-                          <h5 className="font-medium text-black dark:text-white">
-                            {item?.grup_auditor?.auditor_list[0]?.user
-                              ?.nama_lengkap ?? '-'}
-                          </h5>
-                        </td>
-                        <td className="border-b border-[#eee] dark:border-strokedark p-3">
-                          <h5 className="font-medium text-black dark:text-white">
-                            {item?.grup_auditor?.auditor_list[0]?.user
-                              ?.departemen?.nama_departemen ?? '-'}
-                          </h5>
-                        </td>
-                        <td className="border-b border-[#eee] dark:border-strokedark p-3">
-                          <h5 className="font-medium text-black dark:text-white">
-                            {new Date() <= new Date(item?.end_at) &&
-                            !item?.is_responded ? (
-                              <span className="rounded-md px-2 bg-lime-300 py-1">
-                                Open
-                              </span>
-                            ) : new Date() <= new Date(item?.end_at) &&
-                              item?.is_responded ? (
-                              <span className="rounded-md px-2 bg-red-300 py-1">
-                                Close
-                              </span>
-                            ) : (
-                              <span className="rounded-md px-2 bg-lime-300 py-1">
-                                Close
-                              </span>
-                            )}
-                          </h5>
-                        </td>
-                        <td className="border-b border-[#eee] dark:border-strokedark p-3">
-                          <h5 className="font-medium text-black dark:text-white">
-                            {item?.is_responded ? (
-                              <FiCheckCircle className="text-lime-500 text-2xl" />
-                            ) : (
-                              <FiXCircle className="text-red-500 text-2xl" />
-                            )}
-                          </h5>{' '}
-                        </td>
-                        <td className="border-b border-[#eee] dark:border-strokedark p-3">
-                          <div className="flex justify-start items-center gap-2">
-                            <button
-                              onClick={() => handleDetail(item?.id, 'detail')}
-                              className="flex text-white bg-blue-500 px-2.5 py-1.5 rounded-md justify-start items-center gap-3 hover:bg-blue-800 transition-all"
-                            >
-                              <FiEye className="" />
-                              <span className="font-medium">Detail</span>
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  )}
+                  {isPaginating
+                    ? Array(3)
+                        .fill([])
+                        .map((basoka: any, theindex: number) => (
+                          <tr key={theindex}>
+                            {Array(9)
+                              .fill([])
+                              .map((aduhai: any, auindex: number) => (
+                                <TableFilteringReal key={auindex} />
+                              ))}
+                          </tr>
+                        ))
+                    : audits?.my_audits.map((item: any, index: number) => (
+                        <tr key={index}>
+                          <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                            <h5 className="font-medium text-black dark:text-white">
+                              {index + 1}
+                            </h5>
+                          </td>
+                          <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                            <h5 className="font-medium text-black dark:text-white">
+                              {item?.no_plpp}
+                            </h5>
+                          </td>
+                          <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                            <h5 className="font-medium text-black dark:text-white">
+                              {item?.static_data?.iso?.kode}
+                            </h5>
+                          </td>
+                          <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                            <h5 className="font-medium text-black dark:text-white">
+                              {item?.static_data?.grup_auditor?.nama_grup ??
+                                '-'}
+                            </h5>
+                          </td>
+                          <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                            <h5 className="font-medium text-black dark:text-white">
+                              {item?.static_data?.grup_auditor?.auditor_list[0]
+                                ?.user?.nama_lengkap ?? '-'}
+                            </h5>
+                          </td>
+                          <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                            <h5 className="font-medium text-black dark:text-white">
+                              {item?.static_data?.grup_auditor?.auditor_list[0]
+                                ?.user?.departemen?.nama_departemen ?? '-'}
+                            </h5>
+                          </td>
+                          <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                            <h5 className="font-medium text-black dark:text-white">
+                              {new Date() <= new Date(item?.end_at) ? (
+                                <span className="rounded-md px-2 bg-lime-300 py-1">
+                                  Open
+                                </span>
+                              ) : (
+                                <span className="rounded-md px-2 bg-lime-300 py-1">
+                                  Close
+                                </span>
+                              )}
+                            </h5>
+                          </td>
+                          <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                            <h5 className="font-medium text-black dark:text-white">
+                              {item?.is_responded ? (
+                                <BsFillCheckCircleFill className="text-lime-500 text-2xl" />
+                              ) : (
+                                <BsFillXCircleFill className="text-red-500 text-2xl" />
+                              )}
+                            </h5>
+                          </td>
+                          <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                            <div className="flex justify-start items-center gap-2">
+                              <button
+                                onClick={() => handleDetail(item?.id, 'detail')}
+                                className="flex text-white bg-blue-500 px-2.5 py-1.5 rounded-md justify-start items-center gap-3 hover:bg-blue-800 transition-all"
+                              >
+                                <FiEye className="" />
+                                <span className="font-medium">Detail</span>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
                 </tbody>
               </table>
 

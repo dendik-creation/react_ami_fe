@@ -28,7 +28,13 @@ export interface HeaderData {
   auditee?: Auditee;
   historyCount?: number | null;
   grup_auditor?: GrupAuditor;
-  periode: number;
+  periode?: number;
+  static_data?: {
+    iso: Iso;
+    grup_auditor: GrupAuditor;
+    departemen: Departemen;
+    auditee: Auditee;
+  };
   end_at?: any;
   detail_audit?: DetailData[];
 }
@@ -51,15 +57,23 @@ export interface DetailData {
   tanggal_audit: string | number | any;
   tanggal_target: string | number | any;
   tanggal_realisasi?: string | number | any;
+  attachment?: string[];
+  attachment_upload?: any;
   kategori: string;
-  jenis_temuan: {
+  jenis_temuan?: {
     value: string;
     label: string;
-  };
+  } | null;
   status: string;
   temuan: string;
   analisa?: string;
   tindakan?: string;
+  static_data?: {
+    judul_clausul: JudulClausul;
+    clausul: Clausul;
+    sub_clausul: SubClausul;
+    sub_departemen?: SubDepartemen;
+  };
 
   judul_clausul?: JudulClausul;
   clausul?: Clausul;

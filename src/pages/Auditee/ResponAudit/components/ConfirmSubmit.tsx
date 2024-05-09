@@ -3,13 +3,11 @@ import React, { Fragment, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../../../api/respon_audit';
 import { FiSave, FiSend } from 'react-icons/fi';
+import toastFire from '../../../../hooks/toastFire';
 
 interface ConfirmSubmitRespon {
-  id: number | null;
-  data: {
-    analisa: string;
-    tindakan: string;
-  }[];
+  id: any;
+  data: any;
   show: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<any>>;
 }
@@ -25,7 +23,26 @@ const ConfirmSubmit: React.FC<ConfirmSubmitRespon> = ({
 
   const handleSubmit = () => {
     setSubmitting(true);
-    api.auditeeRespondPut(data, setSubmitting, setShowModal, navigate, id);
+    api
+      .auditeePutDocs(data?.document_file)
+      .then(() => {
+        api.auditeeRespondPut(
+          data?.data,
+          setSubmitting,
+          setShowModal,
+          navigate,
+          id,
+        );
+      })
+      .catch((err: any) => {
+        setSubmitting(false);
+        setShowModal({ error_modal: false, confirm_modal: false });
+        toastFire({
+          message:
+            'Ada file yang tidak sesuai format atau melebihi batas maksimum',
+          status: false,
+        });
+      });
   };
 
   return (

@@ -16,6 +16,7 @@ import {
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 import { isAvailableToRespon, parseDateHaha } from '../../../api/date_parser';
 import LoadFetch from '../../../common/Loader/LoadFetch';
+import { BsCheckCircleFill, BsXCircleFill } from 'react-icons/bs';
 
 const ResponAudit: React.FC = () => {
   const [respondList, setRespondList] = useState<NewAuditType[]>();
@@ -129,19 +130,19 @@ const ResponAudit: React.FC = () => {
                           </td>
                           <td className="border-b border-[#eee] dark:border-strokedark p-3">
                             <h5 className="font-medium italic text-black dark:text-white">
-                              {item?.header_audit?.iso?.kode}
+                              {item?.header_audit?.static_data?.iso?.kode}
                             </h5>
                           </td>
                           <td className="border-b border-[#eee] dark:border-strokedark p-3">
                             <h5 className="font-medium text-black dark:text-white">
-                              {item?.header_audit?.grup_auditor?.nama_grup ??
-                                '-'}
+                              {item?.header_audit?.static_data?.grup_auditor
+                                ?.nama_grup ?? '-'}
                             </h5>
                           </td>
                           <td className="border-b border-[#eee] dark:border-strokedark p-3">
                             <h5 className="font-medium text-black dark:text-white">
-                              {item?.header_audit?.grup_auditor?.auditor[0]
-                                ?.user?.nama_lengkap ?? '-'}
+                              {item?.header_audit?.static_data?.grup_auditor
+                                ?.auditor_list[0]?.user?.nama_lengkap ?? '-'}
                             </h5>
                           </td>
                           <td className="border-b border-[#eee] dark:border-strokedark p-3">
@@ -173,9 +174,9 @@ const ResponAudit: React.FC = () => {
                           <td className="border-b border-[#eee] dark:border-strokedark p-3">
                             <h5 className="font-medium text-black dark:text-white">
                               {item?.header_audit?.is_responded ? (
-                                <FiCheckCircle className="text-lime-500 text-2xl" />
+                                <BsCheckCircleFill className="text-lime-500 text-2xl" />
                               ) : (
-                                <FiXCircle className="text-red-500 text-2xl" />
+                                <BsXCircleFill className="text-red-500 text-2xl" />
                               )}
                             </h5>
                           </td>
@@ -185,7 +186,11 @@ const ResponAudit: React.FC = () => {
                                 onClick={() =>
                                   handleRespon(item?.header_audit?.id)
                                 }
-                                className="flex text-white w-36 bg-blue-500 px-2.5 py-1.5 rounded-md justify-start items-center gap-3 hover:bg-blue-800 transition-all"
+                                className={`flex text-white ${
+                                  item?.header_audit?.is_responded
+                                    ? 'w-36'
+                                    : 'w-26'
+                                } bg-blue-500 px-2.5 py-1.5 rounded-md justify-start items-center gap-3 hover:bg-blue-800 transition-all`}
                               >
                                 {item?.header_audit?.is_responded ? (
                                   <>

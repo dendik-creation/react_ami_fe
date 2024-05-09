@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { HeaderData } from '../../pages/Auditor/NewAudit/NewAuditInterface';
 import { FiList } from 'react-icons/fi';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { credential } from '../../utils/constant';
 
 const DepartemenList = ({ deptAuditedNotResponded }: any | undefined) => {
@@ -12,12 +12,10 @@ const DepartemenList = ({ deptAuditedNotResponded }: any | undefined) => {
     }
   }, []);
 
-  const location = useLocation();
-
   return (
     <div className="rounded-lg w-full bg-white shadow-lg p-5">
       <h4 className="mb-6 text-xl font-semibold text-black dark:text-white">
-        Departemen yang belum merespon proses audit yang berlangsung
+        Proses audit yang berlangsung
       </h4>
 
       <div className="flex flex-col">
@@ -94,7 +92,7 @@ const DepartemenList = ({ deptAuditedNotResponded }: any | undefined) => {
         credential?.meta?.active_role == 'management' ? (
           <NavLink
             to={'/history-all-audit'}
-            className="inline-flex mt-4 rounded-md w-full items-center justify-center gap-2.5 bg-emerald-300 px-2 py-2 text-center font-medium text-slate-800 hover:bg-opacity-90 lg:px-8 xl:px-10"
+            className="inline-flex mt-4 rounded-md w-full items-center justify-center gap-2.5 bg-blue-200 px-2 py-2 text-center font-medium text-slate-800 hover:bg-opacity-90 lg:px-8 xl:px-10"
           >
             <FiList className="text-xl" />
             <span className="text-xl">Selengkapnya</span>
@@ -102,7 +100,7 @@ const DepartemenList = ({ deptAuditedNotResponded }: any | undefined) => {
         ) : credential?.meta?.active_role == 'auditor' ? (
           <NavLink
             to={'/monitoring/my-audits'}
-            className="inline-flex mt-4 rounded-md w-full items-center justify-center gap-2.5 bg-emerald-300 px-2 py-2 text-center font-medium text-slate-800 hover:bg-opacity-90 lg:px-8 xl:px-10"
+            className="inline-flex mt-4 rounded-md w-full items-center justify-center gap-2.5 bg-blue-200 px-2 py-2 text-center font-medium text-slate-800 hover:bg-opacity-90 lg:px-8 xl:px-10"
           >
             <FiList className="text-xl" />
             <span className="text-xl">Selengkapnya</span>

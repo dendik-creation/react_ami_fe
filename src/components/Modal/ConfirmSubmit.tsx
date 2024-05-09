@@ -120,6 +120,11 @@ const ConfirmSubmit: React.FC<ConfirmSubmitRespon> = ({
         if (method == 'put') {
           profileApi.updateProfile(data, setSubmitting, setShowModal, navigate);
         }
+        break;
+      case 'CHANGE-PASS':
+        if (method == 'put') {
+          profileApi.changePassword(data, setSubmitting, setShowModal);
+        }
     }
   };
 

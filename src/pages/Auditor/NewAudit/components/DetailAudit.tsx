@@ -1,11 +1,6 @@
 import { Transition } from '@headlessui/react';
 import React, { ChangeEvent, useEffect, useState } from 'react';
-import {
-  FiMinusCircle,
-  FiPlusCircle,
-  FiChevronLeft,
-  FiChevronRight,
-} from 'react-icons/fi';
+import { FiMinusCircle, FiPlusCircle } from 'react-icons/fi';
 import ReactSelect from 'react-select';
 import { DetailData, DetailOfAudit } from '../NewAuditInterface';
 import { headerAudit, detailAudit } from '../../../../api/new_audit';
@@ -90,10 +85,7 @@ const DetailAudit: React.FC<DetailOfAudit> = ({
           tanggal_realisasi: '',
           tanggal_target: headerAudit.tanggalForTarget(),
           kategori: '',
-          jenis_temuan: {
-            value: header?.historyCount > 0 ? 'repeat' : 'new',
-            label: header?.historyCount > 0 ? 'Repeat' : 'New',
-          },
+          jenis_temuan: null,
           status: 'open',
           temuan: '',
         },
@@ -128,26 +120,29 @@ const DetailAudit: React.FC<DetailOfAudit> = ({
                 <div className="border-b flex justify-between items-center border-stroke py-4 px-6.5 dark:border-strokedark">
                   <h3 className="font-medium flex justify-start gap-3 items-center text-black dark:text-white">
                     <span> Entri Detail PLPP Internal</span>
-                    <span className="rounded-full bg-blue-200 font-bold text-slate-800 px-2.5 py-0.5">
-                      {index + 1} / {detail.length}
+                    <span className="font-bold text-slate-800 px-2.5 py-0.5">
+                      <span className="text-xl">{index + 1}</span> /{' '}
+                      {detail.length}
                     </span>
                   </h3>
                   <div className="flex justify-start items-center gap-3">
                     {index !== 0 ? (
                       <span
                         onClick={() => handleRemoveDetail(index)}
-                        className="bg-red-300 hover:bg-red-600 hover:text-white transition-all rounded-full p-1 cursor-pointer"
+                        className="bg-red-300 flex gap-3 items-center hover:bg-red-600 hover:text-white transition-all rounded-md px-2 py-1 cursor-pointer"
                       >
                         <FiMinusCircle className="text-2xl" />
+                        <span>Hapus Temuan</span>
                       </span>
                     ) : (
                       ''
                     )}
                     <span
                       onClick={handleAddDetail}
-                      className="bg-blue-300 hover:bg-blue-600 hover:text-white transition-all rounded-full p-1 cursor-pointer"
+                      className="bg-blue-300 flex hover:bg-blue-600 hover:text-white transition-all rounded-md gap-3 items-center px-2 py-1 cursor-pointer"
                     >
                       <FiPlusCircle className="text-2xl" />
+                      <span>Tambah Temuan</span>
                     </span>
                   </div>
                 </div>
@@ -190,7 +185,6 @@ const DetailAudit: React.FC<DetailOfAudit> = ({
                         Sub Clausul
                       </label>
                       <ReactSelect
-                        required
                         onChange={(e) =>
                           handleSelect(e, 'sub_clausul_id', index)
                         }
@@ -218,21 +212,23 @@ const DetailAudit: React.FC<DetailOfAudit> = ({
                     </div>
                   </div>
                   <div className="flex md:flex-row flex-col justify-start items-start gap-5">
-                    <div>
-                      <label className="mb-3 block text-black dark:text-white">
-                        Temuan
-                      </label>
-                      <textarea
-                        rows={9}
-                        name="temuan"
-                        id="temuan"
-                        required
-                        cols={100}
-                        value={detail[index]?.temuan}
-                        onChange={(e) => handleChange(e, index)}
-                        placeholder="Masukan Temuan"
-                        className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                      ></textarea>
+                    <div className="flex flex-col gap-3">
+                      <div>
+                        <label className="mb-3 block text-black dark:text-white">
+                          Temuan
+                        </label>
+                        <textarea
+                          rows={9}
+                          name="temuan"
+                          id="temuan"
+                          required
+                          cols={100}
+                          value={detail[index]?.temuan}
+                          onChange={(e) => handleChange(e, index)}
+                          placeholder="Masukan Temuan"
+                          className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        ></textarea>
+                      </div>
                     </div>
                     <div className="grid w-full grid-cols-1 xl:grid-cols-2 gap-4">
                       <div className="w-full">

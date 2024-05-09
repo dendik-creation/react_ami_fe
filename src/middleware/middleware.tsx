@@ -4,7 +4,7 @@ import toastFire from '../hooks/toastFire';
 
 export const AuthRoutes = ({ children }: any) => {
   if (
-    !credential ||
+    credential == null ||
     new Date() > new Date(credential?.token.expired_at) ||
     credential?.meta?.active_role == null
   ) {

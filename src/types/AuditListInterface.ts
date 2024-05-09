@@ -114,6 +114,13 @@ export interface MyDetailAudit {
   iso?: Iso;
   departemen?: Departemen;
   auditee?: Auditee;
+  static_data?: {
+    iso: Iso;
+    grup_auditor: GrupAuditor;
+    departemen: Departemen;
+    auditee: Auditee;
+  };
+
   grup_auditor?: GrupAuditor | undefined | null;
   detail_audit?: DetailData[];
 }

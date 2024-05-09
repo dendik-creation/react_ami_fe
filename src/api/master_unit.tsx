@@ -30,10 +30,11 @@ export const api = {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>,
     page: number = 1,
     setPaginating: React.Dispatch<React.SetStateAction<boolean>>,
+    search?: string,
   ) {
     try {
       const response = await axiosInstance.get(
-        `master-data/data-unit?page=${page}`,
+        `master-data/data-unit?page=${page}&search=${search ?? ''}`,
         {
           headers: {
             Authorization: token,

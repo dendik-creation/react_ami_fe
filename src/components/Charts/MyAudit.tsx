@@ -35,6 +35,7 @@ const MyAudit: React.FC<Dataset> = ({ dataset }) => {
     },
     yaxis: {
       min: 0,
+      tickAmount: 4,
       labels: {
         formatter: (val, opts) => `${Math.floor(val)}`,
       },

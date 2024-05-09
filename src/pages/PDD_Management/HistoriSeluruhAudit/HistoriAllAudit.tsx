@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import DefaultLayout from '../../../layout/DefaultLayout';
 import Breadcrumb from '../../../components/Breadcrumbs/Breadcrumb';
 import { Transition } from '@headlessui/react';
@@ -6,18 +6,20 @@ import { HeaderData } from '../../Auditor/NewAudit/NewAuditInterface';
 import { api } from '../../../api/histori_audit';
 import {
   FiBell,
-  FiCheckCircle,
   FiChevronLeft,
   FiChevronRight,
   FiEye,
   FiMail,
-  FiXCircle,
+  FiSearch,
 } from 'react-icons/fi';
+
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 import LoadFetch from '../../../common/Loader/LoadFetch';
 import toast from 'react-hot-toast';
 import { credential } from '../../../utils/constant';
 import { parseDateHaha } from '../../../api/date_parser';
+import TableFilteringReal from '../../../common/Loader/TableFilteringReal';
+import { BsCheckCircleFill, BsXCircleFill } from 'react-icons/bs';
 
 interface metaPagination {
   current_page: number;
@@ -38,6 +40,9 @@ const HistoriAllAudit: React.FC = () => {
   const [disabledBtnSendingEmail, setDisabled] = useState<number>(0);
   const [isPaginating, setPaginating] = useState<boolean>(false);
   const [broadcasting, setBroadcasting] = useState<boolean>(false);
+  const [search, setSearch] = useState<string>('');
+  const [isAvailabletoBroadcast, setAvailableBroadcast] =
+    useState<boolean>(false);
   useEffect(() => {
     api
       .auditsAll(setLoading, 1, setPaginating)
@@ -47,9 +52,34 @@ const HistoriAllAudit: React.FC = () => {
           all_audits: res?.all_audits,
           meta: res?.meta,
         });
+        res?.all_audits?.some((item: any) =>
+          !item?.is_responded
+            ? setAvailableBroadcast(true)
+            : setAvailableBroadcast(false),
+        );
       })
       .catch((err) => console.log(err));
   }, []);
+
+  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+  };
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (search.length > 3) {
+        setPaginating(true);
+        api
+          .auditsAll(setLoading, 1, setPaginating, search)
+          .then((res) => setAudits(res));
+      } else if (search.length == 0) {
+        setPaginating(true);
+        api
+          .auditsAll(setLoading, 1, setPaginating, search)
+          .then((res) => setAudits(res));
+      }
+    }, 400);
+  }, [search]);
 
   const handlePaginate = (target_page: number | any) => {
     setPaginating(true);
@@ -144,7 +174,7 @@ const HistoriAllAudit: React.FC = () => {
               'Seluruh histori dan keterlibatan pihak dalam proses audit akan ditampilkan'
             }
           />
-          {audits?.all_audits?.length > 0 ? (
+          {audits?.all_audits?.length > 0 && isAvailabletoBroadcast ? (
             <div className="group relative transition-all inline-block">
               <button
                 onClick={handleBroadcasting}
@@ -167,6 +197,30 @@ const HistoriAllAudit: React.FC = () => {
           ) : (
             ''
           )}
+        </Transition>
+
+        <Transition
+          show={!loading}
+          enter="transform transition duration-300 delay-[100ms]"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="transform duration-300 transition ease-in-out"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+          className="relative mt-4 mb-6 ms-4"
+        >
+          <FiSearch className="absolute h-full flex items-center text-slate-600 -top-0.5 text-lg" />
+          <input
+            type="search"
+            name="search"
+            autoComplete="off"
+            id="search"
+            required
+            value={search}
+            onChange={handleSearch}
+            placeholder="Cari Berdasarkan No PLPP"
+            className="w-full font-semibold text-slate-600 rounded-sm border-b-2 ps-9 bg-transparent px-3 py-2 outline-none focus:border-blue-500 border-slate-500"
+          />
         </Transition>
 
         {/* My Audit List */}
@@ -220,122 +274,130 @@ const HistoriAllAudit: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {isPaginating ? (
-                    <tr>
-                      <td className="text-center w-full p-6" colSpan={7}>
-                        <l-bouncy size={50} color={'#36454F'} />
-                      </td>
-                    </tr>
-                  ) : (
-                    audits?.all_audits.map((item: any, index: number) => (
-                      <tr key={index}>
-                        <td className="border-b border-[#eee] dark:border-strokedark p-3">
-                          <h5 className="font-medium text-black dark:text-white">
-                            {index + 1}
-                          </h5>
-                        </td>
-                        <td className="border-b border-[#eee] dark:border-strokedark p-3">
-                          <h5 className="font-medium text-black dark:text-white">
-                            {item?.no_plpp}
-                          </h5>
-                        </td>
-                        <td className="border-b border-[#eee] dark:border-strokedark p-3">
-                          <h5 className="font-medium text-black dark:text-white">
-                            {item?.grup_auditor?.nama_grup ?? '-'}
-                          </h5>
-                        </td>
-                        <td className="border-b border-[#eee] dark:border-strokedark p-3">
-                          <h5 className="font-medium text-black dark:text-white">
-                            {item?.grup_auditor?.auditor_list[0]?.user
-                              ?.nama_lengkap ?? '-'}
-                          </h5>
-                        </td>
-                        <td className="border-b border-[#eee] dark:border-strokedark p-3">
-                          <h5 className="font-medium text-black dark:text-white">
-                            {item?.grup_auditor?.auditor_list[0]?.user
-                              ?.departemen?.nama_departemen ?? '-'}
-                          </h5>
-                        </td>
-                        <td className="border-b border-[#eee] dark:border-strokedark p-3">
-                          <h5 className="font-medium text-black dark:text-white">
-                            {item?.auditee?.user?.nama_lengkap ?? '-'}
-                          </h5>
-                        </td>
-                        <td className="border-b border-[#eee] dark:border-strokedark p-3">
-                          <h5 className="font-medium text-black dark:text-white">
-                            {item?.auditee?.user?.departemen?.nama_departemen ??
-                              '-'}
-                          </h5>
-                        </td>
-                        <td className="border-b border-[#eee] dark:border-strokedark p-3">
-                          <h5 className="font-medium text-black dark:text-white">
-                            {item?.end_at ? parseDateHaha(item?.end_at) : '-'}
-                          </h5>
-                        </td>
-                        <td className="border-b border-[#eee] dark:border-strokedark p-3">
-                          <h5 className="font-medium text-black dark:text-white">
-                            {new Date() <= new Date(item?.end_at) ? (
-                              <span className="rounded-md px-2 bg-lime-300 py-1">
-                                Open
-                              </span>
-                            ) : (
-                              <span className="rounded-md px-2 bg-red-300 py-1">
-                                Close
-                              </span>
-                            )}
-                          </h5>
-                        </td>
-                        <td className="border-b border-[#eee] dark:border-strokedark p-3">
-                          <h5 className="font-medium text-black dark:text-white">
-                            {item?.is_responded ? (
-                              <FiCheckCircle className="text-lime-500 text-2xl" />
-                            ) : (
-                              <FiXCircle className="text-red-500 text-2xl" />
-                            )}
-                          </h5>
-                        </td>
-                        <td className="border-b border-[#eee] dark:border-strokedark p-3">
-                          <div className="flex justify-start items-center gap-2">
-                            <button
-                              onClick={() => handleDetail(item?.id, 'detail')}
-                              className="flex w-full text-white bg-blue-500 px-2.5 py-1.5 rounded-md justify-center items-center gap-3 hover:bg-blue-800 transition-all"
-                            >
-                              <FiEye className="" />
-                              <span className="font-medium">Detail</span>
-                            </button>
-                            {!item?.is_responded ? (
+                  {isPaginating
+                    ? Array(3)
+                        .fill([])
+                        .map((basoka: any, theindex: number) => (
+                          <tr key={theindex}>
+                            {Array(11)
+                              .fill([])
+                              .map((aduhai: any, auindex: number) => (
+                                <TableFilteringReal key={auindex} />
+                              ))}
+                          </tr>
+                        ))
+                    : audits?.all_audits.map((item: any, index: number) => (
+                        <tr key={index}>
+                          <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                            <h5 className="font-medium text-black dark:text-white">
+                              {index + 1}
+                            </h5>
+                          </td>
+                          <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                            <h5 className="font-medium text-black dark:text-white">
+                              {item?.no_plpp}
+                            </h5>
+                          </td>
+                          <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                            <h5 className="font-medium text-black dark:text-white">
+                              {item?.static_data?.grup_auditor?.nama_grup ??
+                                '-'}
+                            </h5>
+                          </td>
+                          <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                            <h5 className="font-medium text-black dark:text-white">
+                              {item?.static_data?.grup_auditor?.auditor_list[0]
+                                ?.user?.nama_lengkap ?? '-'}
+                            </h5>
+                          </td>
+                          <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                            <h5 className="font-medium text-black dark:text-white">
+                              {item?.static_data?.grup_auditor?.auditor_list[0]
+                                ?.user?.departemen?.nama_departemen ?? '-'}
+                            </h5>
+                          </td>
+                          <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                            <h5 className="font-medium text-black dark:text-white">
+                              {item?.static_data?.auditee?.user?.nama_lengkap ??
+                                '-'}
+                            </h5>
+                          </td>
+                          <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                            <h5 className="font-medium text-black dark:text-white">
+                              {item?.static_data?.auditee?.user?.departemen
+                                ?.nama_departemen ?? '-'}
+                            </h5>
+                          </td>
+                          <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                            <h5 className="font-medium text-black dark:text-white">
+                              {item?.end_at ? parseDateHaha(item?.end_at) : '-'}
+                            </h5>
+                          </td>
+                          <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                            <h5 className="font-medium text-black dark:text-white">
+                              {new Date() <= new Date(item?.end_at) ? (
+                                <span className="rounded-md px-2 bg-lime-300 py-1">
+                                  Open
+                                </span>
+                              ) : (
+                                <span className="rounded-md px-2 bg-lime-300 py-1">
+                                  Close
+                                </span>
+                              )}
+                            </h5>
+                          </td>
+                          <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                            <h5 className="font-medium text-black dark:text-white">
+                              {item?.is_responded ? (
+                                <BsCheckCircleFill className="text-lime-500 text-2xl" />
+                              ) : (
+                                <BsXCircleFill className="text-red-500 text-2xl" />
+                              )}
+                            </h5>{' '}
+                          </td>
+                          <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                            <div className="flex justify-start items-center gap-2">
                               <button
-                                onClick={() =>
-                                  handleReminder(
-                                    item?.auditee_id,
-                                    item?.auditee?.user?.nama_lengkap,
-                                  )
-                                }
-                                disabled={
-                                  disabledBtnSendingEmail == item?.auditee_id
-                                }
-                                className="flex text-white disabled:cursor-wait group bg-emerald-500 px-2.5 py-1.5 rounded-md justify-start items-center gap-3 hover:bg-emerald-800 transition-all"
+                                onClick={() => handleDetail(item?.id, 'detail')}
+                                className="flex w-full text-white bg-blue-500 px-2.5 py-1.5 rounded-md justify-center items-center gap-3 hover:bg-blue-800 transition-all"
                               >
-                                <div className="group-disabled:block hidden">
-                                  <l-zoomies
-                                    size={95}
-                                    speed={1}
-                                    color={'#FFF'}
-                                  />
-                                </div>
-                                <div className="group-disabled:hidden flex justify-start gap-3 items-center">
-                                  <FiBell className="" />
-                                  <span className="font-medium">Ingatkan</span>
-                                </div>
+                                <FiEye className="" />
+                                <span className="font-medium">Detail</span>
                               </button>
-                            ) : (
-                              ''
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  )}
+                              {!item?.is_responded ? (
+                                <button
+                                  onClick={() =>
+                                    handleReminder(
+                                      item?.auditee_id,
+                                      item?.auditee?.user?.nama_lengkap,
+                                    )
+                                  }
+                                  disabled={
+                                    disabledBtnSendingEmail == item?.auditee_id
+                                  }
+                                  className="flex text-white disabled:cursor-wait group bg-emerald-500 px-2.5 py-1.5 rounded-md justify-start items-center gap-3 hover:bg-emerald-800 transition-all"
+                                >
+                                  <div className="group-disabled:block hidden">
+                                    <l-zoomies
+                                      size={95}
+                                      speed={1}
+                                      color={'#FFF'}
+                                    />
+                                  </div>
+                                  <div className="group-disabled:hidden flex justify-start gap-3 items-center">
+                                    <FiBell className="" />
+                                    <span className="font-medium">
+                                      Ingatkan
+                                    </span>
+                                  </div>
+                                </button>
+                              ) : (
+                                ''
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
                 </tbody>
               </table>
 

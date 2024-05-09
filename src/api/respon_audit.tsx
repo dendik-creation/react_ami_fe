@@ -1,8 +1,9 @@
 import React from 'react';
 import { axiosInstance } from '../utils/axiosInstance';
-import { token } from '../utils/constant';
+import { apiBaseUrl, token } from '../utils/constant';
 import { NavigateFunction } from 'react-router-dom';
 import toastFire from '../hooks/toastFire';
+import axios from 'axios';
 
 export const api = {
   async auditeeRespondList(
@@ -49,7 +50,7 @@ export const api = {
     setSubmitting: React.Dispatch<React.SetStateAction<boolean>>,
     setShowModal: React.Dispatch<React.SetStateAction<boolean>>,
     navigate: NavigateFunction,
-    id: number,
+    id: any,
   ) {
     try {
       const response = await axiosInstance.put(
@@ -58,7 +59,9 @@ export const api = {
           data: data,
         },
         {
-          headers: { Authorization: token },
+          headers: {
+            Authorization: token,
+          },
         },
       );
       if (response.status == 200) {
@@ -72,11 +75,27 @@ export const api = {
     } catch (error: any) {
       setSubmitting(false);
       toastFire({
-        message: error.response.message,
+        message: error.response.data.message,
         status: false,
       });
     } finally {
       setShowModal((prev: any) => ({ ...prev, confirm_modal: false }));
+    }
+  },
+  async auditeePutDocs(data: any) {
+    if (data) {
+      const response = await axiosInstance.post(
+        `/respon-audit/docs`,
+        {
+          data,
+        },
+        {
+          headers: {
+            Authorization: token,
+            'Content-Type': 'multipart/form-data',
+          },
+        },
+      );
     }
   },
   async historyDeptByPeriode(dept_id: number | undefined) {
@@ -92,6 +111,51 @@ export const api = {
       return response.data;
     } catch (error) {
       console.log(error);
+    }
+  },
+
+  async downloadFile(
+    pathfile: string,
+    setDownloading: React.Dispatch<React.SetStateAction<boolean>>,
+  ) {
+    const fileName = pathfile.substring(pathfile.lastIndexOf('/') + 1);
+    const res = await axiosInstance
+      .post(
+        `download/attachment`,
+        { pathfile: pathfile },
+        {
+          responseType: 'blob',
+          headers: {
+            Authorization: token,
+          },
+        },
+      )
+      .then((res) => {
+        const url = window.URL.createObjectURL(new Blob([res.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', fileName);
+        document.body.appendChild(link);
+        setTimeout(() => {
+          setDownloading(false);
+          link.click();
+        }, 1000);
+      });
+  },
+
+  async getFile(pathfile: string) {
+    try {
+      const res = await axiosInstance.get(
+        `get/attachment?pathfile=${pathfile}`,
+        {
+          headers: {
+            Authorization: token,
+          },
+        },
+      );
+      return res.data;
+    } catch (err) {
+      console.log(err);
     }
   },
 };

@@ -12,6 +12,7 @@ import DepartemenList from '../../components/Tables/DepartemenList';
 import MostGrupAuditorAuditChart from '../../components/Charts/MostGrupAuditorAuditChart';
 import LoadFetch from '../../common/Loader/LoadFetch';
 import { HeaderData } from '../Auditor/NewAudit/NewAuditInterface';
+import DeptAuditCount from '../../components/Tables/DeptAuditCount';
 
 interface Audit {
   mayor: number;
@@ -44,16 +45,47 @@ interface Data {
   all_users: UsersData;
   most_grup_auditor_audit: MostGrupAuditorAuditForChart[];
   dept_audited_not_responded: HeaderData[];
+  dept_sortby_not_audited: {
+    departemen: string;
+    unit: string;
+    audit_count: number;
+  }[];
 }
 
 const PDDDashboard: React.FC = () => {
   const [data, setData] = useState<Data>();
+  const [filterDept, setFilterDept] = useState<any>();
   const [loading, setLoading] = useState<boolean>(true);
+  const [onFiltering, setFiltering] = useState<boolean>(true);
+
+  const getFilterDeptNow = () => {
+    setFilterDept({
+      tahun: new Date().getFullYear(),
+      periode: new Date().getMonth() + 1 > 6 ? 2 : 1,
+    });
+  };
+
   useEffect(() => {
-    setTimeout(() => {
-      auditorDashboard(setLoading).then((res) => setData(res));
-    }, 250);
+    getFilterDeptNow();
   }, []);
+
+  const requestApiPddDashboard = () => {
+    setData((prev: any) => ({
+      ...prev,
+      dept_sortby_not_audited: [],
+    }));
+    auditorDashboard(setLoading, filterDept).then((res) => {
+      setData(res);
+      setFiltering(false);
+    });
+  };
+
+  useEffect(() => {
+    if (filterDept) {
+      setFiltering(true);
+      requestApiPddDashboard();
+    }
+  }, [filterDept]);
   return (
     <DefaultLayout>
       <Transition
@@ -162,6 +194,22 @@ const PDDDashboard: React.FC = () => {
           </Transition>
         </div>
 
+        {/* Audit Live */}
+        <Transition
+          show={!loading}
+          enter="transform transition duration-300 delay-[600ms]"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="transform duration-300 transition ease-in-out"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+          className={'mb-6'}
+        >
+          <DepartemenList
+            deptAuditedNotResponded={data?.dept_audited_not_responded}
+          />
+        </Transition>
+
         {/* Departemen List */}
         <Transition
           show={!loading}
@@ -171,9 +219,13 @@ const PDDDashboard: React.FC = () => {
           leave="transform duration-300 transition ease-in-out"
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
+          className={'mb-6'}
         >
-          <DepartemenList
-            deptAuditedNotResponded={data?.dept_audited_not_responded}
+          <DeptAuditCount
+            dept_sortby_not_audited={data?.dept_sortby_not_audited}
+            filterDept={filterDept}
+            setFilterDept={setFilterDept}
+            onFiltering={onFiltering}
           />
         </Transition>
       </div>

@@ -3,12 +3,15 @@ import Breadcrumb from '../../../components/Breadcrumbs/Breadcrumb';
 import DefaultLayout from '../../../layout/DefaultLayout';
 import { Transition } from '@headlessui/react';
 import { api } from '../../../api/my_audits';
+import { api as apiResponAudit } from '../../../api/respon_audit';
 import { useParams } from 'react-router-dom';
 import { MyDetailAudit } from '../../../types/AuditListInterface';
 import { parseDateHaha } from '../../../api/date_parser';
 import LoadFetch from '../../../common/Loader/LoadFetch';
 import { Splide, SplideSlide } from '@splidejs/react-splide';
 import { DetailData } from '../NewAudit/NewAuditInterface';
+import { FiDownloadCloud, FiFileText } from 'react-icons/fi';
+import { apiBeBaseUrl } from '../../../utils/constant';
 
 const MyAuditDetail: React.FC = () => {
   const [audits, setAudits] = useState<MyDetailAudit | undefined>();
@@ -30,6 +33,17 @@ const MyAuditDetail: React.FC = () => {
       })
       .catch((err) => console.error(err));
   }, []);
+
+  useEffect(() => {
+    console.log(audits);
+  }, [audits]);
+
+  const [downloading, setDownloading] = useState<boolean>(false);
+
+  const handleDownloadAttachment = async (url: string) => {
+    setDownloading(true);
+    apiResponAudit.downloadFile(url, setDownloading);
+  };
   return (
     <>
       <DefaultLayout>
@@ -82,7 +96,7 @@ const MyAuditDetail: React.FC = () => {
             <div className="flex flex-col gap-5.5 p-6.5">
               <div className="">
                 <div className="font-semibold text-xl mb-3">
-                  Grup Auditor {audits?.grup_auditor?.nama_grup}
+                  Grup Auditor {audits?.static_data?.grup_auditor?.nama_grup}
                 </div>
                 <div className="flex flex-col">
                   <div className="">
@@ -92,7 +106,10 @@ const MyAuditDetail: React.FC = () => {
                         <div className="w-[120px]">Nama</div>
                         <div className="">
                           :{' '}
-                          {audits?.grup_auditor?.auditor[0]?.user?.nama_lengkap}
+                          {
+                            audits?.static_data?.grup_auditor?.auditor_list[0]
+                              ?.user?.nama_lengkap
+                          }
                         </div>
                       </div>
                       <div className="flex justify-start items-center">
@@ -100,8 +117,8 @@ const MyAuditDetail: React.FC = () => {
                         <div className="">
                           :{' '}
                           {
-                            audits?.grup_auditor?.auditor[0]?.user?.departemen
-                              ?.nama_departemen
+                            audits?.static_data?.grup_auditor?.auditor_list[0]
+                              ?.user?.departemen?.nama_departemen
                           }
                         </div>
                       </div>
@@ -110,8 +127,8 @@ const MyAuditDetail: React.FC = () => {
                         <div className="">
                           :{' '}
                           {
-                            audits?.grup_auditor?.auditor[0]?.user?.departemen
-                              ?.unit?.nama_unit
+                            audits?.static_data?.grup_auditor?.auditor_list[0]
+                              ?.user?.departemen?.unit?.nama_unit
                           }
                         </div>
                       </div>
@@ -120,7 +137,7 @@ const MyAuditDetail: React.FC = () => {
                   <div className="">
                     <div className="font-medium mb-2">Anggota Auditor</div>
                     <div className="grid grid-cols-1 md:grid-cols-2  xl:grid-cols-3 gap-4">
-                      {audits?.grup_auditor?.auditor
+                      {audits?.static_data?.grup_auditor?.auditor_list
                         ?.slice(1)
                         .map((item: any, index: number) => (
                           <div
@@ -160,19 +177,27 @@ const MyAuditDetail: React.FC = () => {
                       <div className="flex justify-start items-center">
                         <div className="w-[120px]">Nama</div>
                         <div className="">
-                          : {audits?.auditee?.user?.nama_lengkap}
+                          : {audits?.static_data?.auditee?.user?.nama_lengkap}
                         </div>
                       </div>
                       <div className="flex justify-start items-center">
                         <div className="w-[120px]">Departemen</div>
                         <div className="">
-                          : {audits?.auditee?.user?.departemen?.nama_departemen}
+                          :{' '}
+                          {
+                            audits?.static_data?.auditee?.user?.departemen
+                              ?.nama_departemen
+                          }
                         </div>
                       </div>
                       <div className="flex justify-start items-center">
                         <div className="w-[120px]">Unit</div>
                         <div className="">
-                          : {audits?.auditee?.user?.departemen?.unit?.nama_unit}
+                          :{' '}
+                          {
+                            audits?.static_data?.auditee?.user?.departemen?.unit
+                              ?.nama_unit
+                          }
                         </div>
                       </div>
                     </div>
@@ -223,22 +248,30 @@ const MyAuditDetail: React.FC = () => {
                                 <div className="flex justify-start items-center">
                                   <div className="w-[120px]">Judul Clausul</div>
                                   <div className="">
-                                    : {item?.judul_clausul?.kode} {' - '}
-                                    {item?.judul_clausul?.judul_clausul}
+                                    : {item?.static_data?.judul_clausul?.kode}{' '}
+                                    {' - '}
+                                    {
+                                      item?.static_data?.judul_clausul
+                                        ?.judul_clausul
+                                    }
                                   </div>
                                 </div>
                                 <div className="flex justify-start items-center">
                                   <div className="w-[120px]">Clausul</div>
                                   <div className="">
-                                    : {item?.clausul?.kode} {' - '}
-                                    {item?.clausul?.nama_clausul}
+                                    : {item?.static_data?.clausul?.kode} {' - '}
+                                    {item?.static_data?.clausul?.nama_clausul}
                                   </div>
                                 </div>
                                 <div className="flex justify-start items-center">
                                   <div className="w-[120px]">Sub Clausul</div>
                                   <div className="">
-                                    : {item?.sub_clausul?.kode} {' - '}{' '}
-                                    {item?.sub_clausul?.nama_sub_clausul}
+                                    : {item?.static_data?.sub_clausul?.kode}{' '}
+                                    {' - '}{' '}
+                                    {
+                                      item?.static_data?.sub_clausul
+                                        ?.nama_sub_clausul
+                                    }
                                   </div>
                                 </div>
                               </div>
@@ -297,6 +330,14 @@ const MyAuditDetail: React.FC = () => {
                             <div className="">
                               <div className="mb-3">
                                 <div className="flex justify-start items-center">
+                                  <div className="w-[140px]">Sub Dept</div>
+                                  <div className="capitalize">
+                                    :{' '}
+                                    {item?.static_data?.sub_departemen
+                                      ?.nama_sub_departemen ?? '-'}
+                                  </div>
+                                </div>
+                                <div className="flex justify-start items-center">
                                   <div className="w-[140px]">Kategori</div>
                                   <div className="capitalize">
                                     : {item?.kategori}
@@ -341,6 +382,93 @@ const MyAuditDetail: React.FC = () => {
                                   <div className="w-[140px]">Tindakan</div>
                                   <div className="capitalize">
                                     : {item?.tindakan ?? '-'}
+                                  </div>
+                                </div>
+                                <div className="flex mt-4 flex-col justify-start items-start">
+                                  <div className="">
+                                    Attachment (Data Pendukung) :
+                                  </div>
+                                  <div className="grid lg:grid-cols-4 w-full md:grid-cols-3 grid-cols-1 gap-3 mt-4">
+                                    {item?.attachment?.map(
+                                      (item: any, index: number) => (
+                                        <button
+                                          key={index}
+                                          disabled={downloading}
+                                          onClick={() =>
+                                            handleDownloadAttachment(item)
+                                          }
+                                          className="overflow-hidden relative md:h-44 h-40 w-full border-2 border-slate-400 border-dashed cursor-pointer group rounded-md"
+                                        >
+                                          {item.split('.')[1] == 'jpg' ||
+                                          item.split('.')[1] == 'png' ||
+                                          item.split('.')[1] == 'jpeg' ? (
+                                            <div className="w-full h-full relative object-cover">
+                                              <div className="absolute opacity-0 group-hover:opacity-100 z-20 transition-all bg-black/60 top-0 left-0 flex justify-center items-center flex-col w-full h-full gap-2">
+                                                {downloading ? (
+                                                  <div className="flex flex-col gap-2 justify-center items-center">
+                                                    <l-ring
+                                                      size={60}
+                                                      stroke={20}
+                                                      speed={2}
+                                                      color={'#fff'}
+                                                    />
+                                                  </div>
+                                                ) : (
+                                                  <div className="flex flex-col gap-2 justify-center items-center">
+                                                    <FiDownloadCloud className="text-5xl text-white" />
+                                                    <span className="font-bold text-white">
+                                                      Download
+                                                    </span>
+                                                  </div>
+                                                )}
+                                              </div>
+                                              <img
+                                                loading="lazy"
+                                                className="w-full h-full object-cover group-hover:scale-125 z-0 transition-all"
+                                                src={`${apiBeBaseUrl}/storage/${item}`}
+                                                alt={'UnLoad'}
+                                              />
+                                              <div className="absolute left-0 bg-slate-800/70  bottom-0 py-1 w-full items-center justify-center text-white">
+                                                <span className="text-[13.5px]">
+                                                  {item.split('/').pop()}
+                                                </span>
+                                              </div>
+                                            </div>
+                                          ) : (
+                                            <div className="w-full h-full object-cover">
+                                              <div className="absolute opacity-0 group-hover:opacity-100 transition-all z-20 bg-black/80 top-0 left-0 flex justify-center items-center flex-col w-full h-full gap-2">
+                                                {downloading ? (
+                                                  <div className="flex flex-col gap-2 justify-center items-center">
+                                                    <l-ring
+                                                      size={60}
+                                                      stroke={20}
+                                                      speed={2}
+                                                      color={'#fff'}
+                                                    />
+                                                  </div>
+                                                ) : (
+                                                  <div className="flex flex-col gap-2 justify-center items-center">
+                                                    <FiDownloadCloud className="text-5xl text-white" />
+                                                    <span className="font-bold text-white">
+                                                      Download
+                                                    </span>
+                                                  </div>
+                                                )}
+                                              </div>
+                                              <div className="w-full h-full flex-col gap-2 transition-all z-0 object-cover flex justify-center items-center">
+                                                <FiFileText className="text-6xl transition-all text-slate-500" />
+                                                <span className="text-slate-500 text-4x font-bold uppercase">
+                                                  {item.split('.')[1]}
+                                                </span>
+                                                <span className="text-sm absolute  bg-slate-800/70 bottom-0 py-1 left-0 w-full justify-center font-semibold text-white">
+                                                  {item.split('/').pop()}
+                                                </span>
+                                              </div>
+                                            </div>
+                                          )}
+                                        </button>
+                                      ),
+                                    )}
                                   </div>
                                 </div>
                               </div>

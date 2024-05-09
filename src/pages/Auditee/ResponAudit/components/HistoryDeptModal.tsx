@@ -16,8 +16,6 @@ const HistoryDeptModal: React.FC<DeptHistoryI> = ({
   setShowHistory,
   historyDept,
 }) => {
-  const [selectedTabs, setTabs] = useState<number | any>(1);
-
   return (
     <>
       <Transition appear show={historyModal?.modal} as={Fragment}>
@@ -54,17 +52,16 @@ const HistoryDeptModal: React.FC<DeptHistoryI> = ({
                     as="h1"
                     className="text-xl mb-5 font-bold text-gray-900"
                   >
-                    Histori Audit Departemen Auditee 1 Tahun Terakhir
+                    Histori Audit Departemen Auditee 1 Periode Terakhir
                   </Dialog.Title>
 
                   {/* Content */}
                   <Tab.Group>
-                    <Tab.List className="flex gap-6 transition-all rounded-xl bg-slate-500 p-2">
+                    <Tab.List className="flex gap-6 cursor-default transition-all rounded-xl bg-slate-400 p-2">
                       <Tab
-                        onFocus={() => setTabs(0)}
                         className={({ selected }) =>
                           classNames(
-                            'w-full rounded-lg py-2.5 text-sm transition-all font-medium leading-5',
+                            'w-full rounded-lg py-2.5 cursor-auto text-lg font-semibold leading-5 transition-all',
                             'ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
                             selected
                               ? 'bg-white text-slate-700 shadow transition-all'
@@ -72,102 +69,82 @@ const HistoryDeptModal: React.FC<DeptHistoryI> = ({
                           )
                         }
                       >
-                        Periode 1
-                      </Tab>
-                      <Tab
-                        onFocus={() => setTabs(1)}
-                        className={({ selected }) =>
-                          classNames(
-                            'w-full rounded-lg py-2.5 text-sm font-medium leading-5 transition-all',
-                            'ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
-                            selected
-                              ? 'bg-white text-slate-700 shadow transition-all'
-                              : 'text-blue-100 hover:bg-white/[0.12] transition-all hover:text-white',
-                          )
-                        }
-                      >
-                        Periode 2
+                        {historyDept?.periode}
                       </Tab>
                     </Tab.List>
 
                     {/* Contents */}
-                    <Tab.Panels className="mt-4">
-                      {historyDept &&
-                      selectedTabs != null &&
-                      historyDept[selectedTabs].length > 0 ? (
-                        historyDept[selectedTabs]?.map(
-                          (item: any, index: number) => (
-                            <Disclosure key={index}>
-                              {({ open }) => (
-                                <>
-                                  <Disclosure.Button className="flex w-full justify-between rounded-lg bg-purple-100 px-4 py-2 text-left font-medium text-purple-900 transition-all text-lg hover:bg-purple-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500/75">
-                                    <span>
-                                      {item?.no_plpp} || Terdapat{' '}
-                                      {item?.detail_audit?.length} Temuan
-                                    </span>
-                                    <FiChevronDown
-                                      className={`transition-all ${
-                                        open ? 'rotate-180  transform' : ''
-                                      } h-7 w-7 text-purple-500`}
-                                    />
-                                  </Disclosure.Button>
-                                  <Disclosure.Panel
-                                    className={`px-4 pb-2 pt-4 text-gray-500 transition-all gap-4 grid grid-cols-1 md:grid-cols-2`}
-                                  >
-                                    {item?.detail_audit?.map(
-                                      (detail_item: any, detail_index: any) => (
+                    <Tab.Panels className="mt-4 flex flex-col gap-3">
+                      {historyDept && historyDept?.data?.length > 0 ? (
+                        historyDept?.data?.map((item: any, index: number) => (
+                          <Disclosure key={index}>
+                            {({ open }) => (
+                              <>
+                                <Disclosure.Button className="flex w-full justify-between rounded-lg bg-purple-100 px-4 py-2 text-left font-medium text-purple-900 transition-all text-lg hover:bg-purple-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500/75">
+                                  <span>
+                                    {item?.no_plpp} || Terdapat{' '}
+                                    {item?.detail_audit?.length} Temuan
+                                  </span>
+                                  <FiChevronDown
+                                    className={`transition-all ${
+                                      open ? 'rotate-180  transform' : ''
+                                    } h-7 w-7 text-purple-500`}
+                                  />
+                                </Disclosure.Button>
+                                <Disclosure.Panel
+                                  className={`px-4 pb-2 pt-4 text-gray-500 transition-all gap-4 grid grid-cols-1 md:grid-cols-2`}
+                                >
+                                  {item?.detail_audit?.map(
+                                    (detail_item: any, detail_index: any) => (
+                                      <div
+                                        key={detail_index}
+                                        className="flex h-full justify-start border-2 rounded-md border-dashed border-slate-300 items-start gap-3"
+                                      >
                                         <div
-                                          key={detail_index}
-                                          className="flex h-full justify-start border-2 rounded-md border-dashed border-slate-300 items-start gap-3"
+                                          className={`text-3xl font-semibold h-20 grid place-content-center w-20 text-center rounded-md ${
+                                            detail_item?.kategori == 'mayor'
+                                              ? 'bg-red-400 text-white'
+                                              : detail_item?.kategori == 'minor'
+                                              ? 'bg-yellow-400 text-white'
+                                              : detail_item?.kategori ==
+                                                'observasi'
+                                              ? 'bg-blue-400 text-white'
+                                              : ''
+                                          }`}
                                         >
-                                          <div
-                                            className={`text-3xl font-semibold h-20 grid place-content-center w-20 text-center rounded-md ${
-                                              detail_item?.kategori == 'mayor'
-                                                ? 'bg-red-400 text-white'
-                                                : detail_item?.kategori ==
-                                                  'minor'
-                                                ? 'bg-yellow-400 text-white'
-                                                : detail_item?.kategori ==
-                                                  'observasi'
-                                                ? 'bg-blue-400 text-white'
-                                                : ''
-                                            }`}
-                                          >
-                                            <div className="h-full">
-                                              {detail_index + 1}
-                                            </div>
+                                          <div className="h-full">
+                                            {detail_index + 1}
                                           </div>
-                                          <ul className="flex p-3 items-start flex-col justify-start">
-                                            <li className="flex justify-start">
-                                              <span className="w-[150px]">
-                                                Kategori
-                                              </span>
-                                              <span className="capitalize">
-                                                : {detail_item?.kategori}
-                                              </span>
-                                            </li>
-                                            <li className="flex justify-start">
-                                              <span className="w-[150px]">
-                                                Jenis Temuan
-                                              </span>
-                                              <span className="capitalize">
-                                                : {detail_item?.jenis_temuan}
-                                              </span>
-                                            </li>
-                                          </ul>
                                         </div>
-                                      ),
-                                    )}
-                                  </Disclosure.Panel>
-                                </>
-                              )}
-                            </Disclosure>
-                          ),
-                        )
+                                        <ul className="flex p-3 items-start flex-col justify-start">
+                                          <li className="flex justify-start">
+                                            <span className="w-[150px]">
+                                              Kategori
+                                            </span>
+                                            <span className="capitalize">
+                                              : {detail_item?.kategori}
+                                            </span>
+                                          </li>
+                                          <li className="flex justify-start">
+                                            <span className="w-[150px]">
+                                              Jenis Temuan
+                                            </span>
+                                            <span className="capitalize">
+                                              : {detail_item?.jenis_temuan}
+                                            </span>
+                                          </li>
+                                        </ul>
+                                      </div>
+                                    ),
+                                  )}
+                                </Disclosure.Panel>
+                              </>
+                            )}
+                          </Disclosure>
+                        ))
                       ) : (
                         <div className="text-center w-full">
-                          Departemen Belum Pernah Di Audit Pada Periode{' '}
-                          {selectedTabs + 1}
+                          Departemen Belum Pernah Di Audit Pada Periode {/*  */}
                         </div>
                       )}
                     </Tab.Panels>

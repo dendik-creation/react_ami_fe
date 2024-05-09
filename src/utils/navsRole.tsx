@@ -92,6 +92,13 @@ const navsRole = [
       ],
     },
     {
+      name: 'Perpanjang Audit',
+      url: '/perpanjang-audit',
+      isGrup: false,
+      icon: <FiUnlock />,
+      lists: [],
+    },
+    {
       name: 'Histori Seluruh Audit',
       icon: <FiCloud />,
       url: '/history-all-audit',

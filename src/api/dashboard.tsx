@@ -3,13 +3,18 @@ import { token } from '../utils/constant';
 
 export const auditorDashboard = async (
   setLoading: React.Dispatch<React.SetStateAction<boolean>>,
+  filterDept?: any,
 ) => {
   try {
-    const response = await axiosInstance.get('/dashboard', {
-      headers: {
-        Authorization: token,
+    const response = await axiosInstance.get(
+      '/dashboard',
+      { params: filterDept },
+      {
+        headers: {
+          Authorization: token,
+        },
       },
-    });
+    );
     await setTimeout(() => {
       setLoading(false);
     }, 250);

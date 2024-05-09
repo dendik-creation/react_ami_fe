@@ -1,6 +1,7 @@
 import { apiBaseUrl, token } from '../utils/constant';
 import axios from 'axios';
 import toastFire from '../hooks/toastFire';
+import toast from 'react-hot-toast';
 
 interface Credential {
   username: string;
@@ -102,5 +103,23 @@ export const logout = async (
     });
   } finally {
     setLoad(false);
+  }
+};
+
+export const logoutAfterChangePass = async () => {
+  const response = await axios.post(
+    `${apiBaseUrl}/auth/logout`,
+    {},
+    {
+      headers: {
+        Authorization: token,
+      },
+    },
+  );
+  if (response.status == 200) {
+    await localStorage.removeItem('credentials');
+    setTimeout(() => {
+      window.location.href = '/login';
+    }, 1000);
   }
 };
