@@ -78,6 +78,7 @@ export const parentNewAudit = {
     const headerEdited = {
       ...header,
       periode: detailAudit.whatPeriode(new Date().getMonth() + 1),
+      is_responded: 0,
       end_at: detail[0]?.tanggal_target,
     };
     let detailEdited: any = [];
