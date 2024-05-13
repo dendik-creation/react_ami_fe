@@ -31,10 +31,10 @@ const AllAudit: React.FC<Dataset> = ({ dataset }) => {
 
   const options: ApexOptions = {
     chart: {
-      fontFamily: 'Quicksand Semibold',
+      fontFamily: 'Output Sans Regular',
       type: 'bar',
       height: 335,
-      stacked: true,
+      stacked: false,
       toolbar: {
         show: true,
       },

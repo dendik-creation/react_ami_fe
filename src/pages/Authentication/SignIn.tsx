@@ -117,7 +117,7 @@ const SignIn: React.FC = () => {
         leave="transform duration-300 transition"
         leaveFrom="opacity-100 scale-100"
         leaveTo="opacity-0 scale-95"
-        className={`flex flex-wrap md:bg-opacity-25 md:backdrop-filter md:backdrop-blur-lg items-center overflow-hidden md:px-18 px-6 py-6 md:py-0 w-full mx-4 md:w-3/4 md:mx-0 bg-blue-300 rounded-lg shadow-default`}
+        className={`flex flex-wrap md:bg-opacity-25 md:backdrop-filter md:backdrop-blur-lg items-center overflow-hidden md:px-18 px-6 py-6 md:py-0 w-full mx-4 md:w-3/4 md:mx-0 bg-gradient-to-l from-blue-200 to-blue-200/0 rounded-lg shadow-default`}
       >
         <div className="hidden w-full xl:block xl:w-1/2 -z-10">
           <div className="py-17.5 px-26 text-center">
@@ -128,7 +128,7 @@ const SignIn: React.FC = () => {
               <img
                 src="/img/log-in.svg"
                 alt=""
-                className="w-full h-full bg-gradient-to-r from-blue-400 to-blue-200/0 -translate-x-8 scale-[2.5]"
+                className="w-full h-full bg-gradient-to-r from-blue-200 to-blue-200/0 -translate-x-8 scale-[2.5]"
               />
             </center>
           </div>

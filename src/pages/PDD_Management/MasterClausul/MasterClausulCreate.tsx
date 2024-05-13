@@ -129,13 +129,27 @@ const MasterClausulCreate: React.FC = () => {
           },
         ],
       }));
+      setTimeout(() => {
+        const btnNext: HTMLButtonElement | any = document.querySelector(
+          '.splide__arrow--next',
+        );
+        btnNext.click();
+      }, 250);
     },
     async removeClausul(clausul_index: any, status: string) {
-      setClausul((prev: any) => {
-        const newClausul = [...prev.clausul];
-        newClausul.splice(clausul_index, 1);
-        return { ...prev, clausul: newClausul };
-      });
+      setTimeout(() => {
+        const btnNext: HTMLButtonElement | any = document.querySelector(
+          '.splide__arrow--prev',
+        );
+        btnNext.click();
+      }, 250);
+      setTimeout(() => {
+        setClausul((prev: any) => {
+          const newClausul = [...prev.clausul];
+          newClausul.splice(clausul_index, 1);
+          return { ...prev, clausul: newClausul };
+        });
+      }, 500);
     },
   };
 

@@ -149,7 +149,7 @@ function App() {
               }
             />
             <Route
-              path="/monitoring/audit/edit/:id"
+              path="/audit/edit/:id"
               element={
                 <>
                   <PageTitle title="Audit Saya | Pura AMI" />

@@ -17,7 +17,8 @@ export interface NewAuditType {
 export interface HeaderData {
   id?: any;
   no_plpp: string;
-  is_responded?: number | boolean;
+  kategori_temuan?: string[];
+  is_responded?: number | boolean | string;
   grup_auditor_id: number | null;
   auditee_id: number | null;
   iso_id: number | null;
@@ -25,6 +26,7 @@ export interface HeaderData {
   temuan_audit: string;
   departemen?: Departemen;
   iso?: Iso;
+  tahun?: string;
   auditee?: Auditee;
   historyCount?: number | null;
   grup_auditor?: GrupAuditor;

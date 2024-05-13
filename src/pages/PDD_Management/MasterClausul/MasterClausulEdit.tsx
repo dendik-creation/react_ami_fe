@@ -140,19 +140,33 @@ const MasterClausulEdit: React.FC = () => {
           },
         ],
       }));
+      setTimeout(() => {
+        const btnNext: HTMLButtonElement | any = document.querySelector(
+          '.splide__arrow--next',
+        );
+        btnNext.click();
+      }, 250);
     },
     async removeClausul(clausul_index: any, status: string) {
-      if (status == 'then') {
-        setRemovedClausul((prev: any) => ({
-          ...prev,
-          clausul: [...prev.clausul, judul_clausul?.clausul[clausul_index]],
-        }));
-      }
-      setClausul((prev: any) => {
-        const newClausul = [...prev.clausul];
-        newClausul.splice(clausul_index, 1);
-        return { ...prev, clausul: newClausul };
-      });
+      setTimeout(() => {
+        const btnNext: HTMLButtonElement | any = document.querySelector(
+          '.splide__arrow--prev',
+        );
+        btnNext.click();
+      }, 250);
+      setTimeout(() => {
+        if (status == 'then') {
+          setRemovedClausul((prev: any) => ({
+            ...prev,
+            clausul: [...prev.clausul, judul_clausul?.clausul[clausul_index]],
+          }));
+        }
+        setClausul((prev: any) => {
+          const newClausul = [...prev.clausul];
+          newClausul.splice(clausul_index, 1);
+          return { ...prev, clausul: newClausul };
+        });
+      }, 500);
     },
   };
 

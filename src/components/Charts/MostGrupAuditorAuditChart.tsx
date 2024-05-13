@@ -8,13 +8,24 @@ const MostGrupAuditorAuditChart: React.FC = ({
 }: any | undefined | null) => {
   const options: ApexOptions = {
     chart: {
-      fontFamily: 'Quicksand Semibold',
+      fontFamily: 'Output Sans Regular',
       type: 'donut',
       toolbar: {
         show: true,
+        export: {
+          png: {
+            filename: 'Most Grup Auditor Audited - Donut Chart',
+          },
+          csv: {
+            filename: 'Most Grup Auditor Audited - Donut Chart',
+          },
+          svg: {
+            filename: 'Most Grup Auditor Audited - Donut Chart',
+          },
+        },
       },
     },
-    colors: ['#FFEB3B', '#FFD176', '#FFE0B2', '#E3F2FD', '#FFF59D'],
+    colors: ['#FFEB3B', '#FFD176', '#E3F2FD', '#FFF59D', '#FFE0B2'],
     labels: dataset?.map((item: any) => item.nama_grup),
     legend: {
       show: true,
@@ -43,10 +54,10 @@ const MostGrupAuditorAuditChart: React.FC = ({
     },
     dataLabels: {
       enabled: true,
-      formatter: (val, opt) => `${val}%`,
+      formatter: (val: any, opt) => `${parseInt(val)}%`,
       style: {
-        fontFamily: 'Quicksand Semibold',
-        fontSize: '18px',
+        fontFamily: 'Output Sans Regular',
+        fontSize: '15px',
         fontWeight: 'medium',
         colors: ['white'],
       },

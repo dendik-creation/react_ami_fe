@@ -92,7 +92,7 @@ const MyAuditList: React.FC = () => {
     if (action == 'detail') {
       navigate(`/monitoring/audit/detail/${header_id}`);
     } else if (action == 'edit') {
-      navigate(`/monitoring/audit/edit/${header_id}`);
+      navigate(`/audit/edit/${header_id}`);
     }
   };
 
@@ -194,10 +194,16 @@ const MyAuditList: React.FC = () => {
                 <thead>
                   <tr className="bg-slate-700 text-left">
                     <th className="min-w-[50px] p-3 font-medium text-white">
+                      {/*  */}
+                    </th>
+                    <th className="min-w-[50px] p-3 font-medium text-white">
                       No
                     </th>
                     <th className="min-w-[50px] p-3 font-medium text-white">
                       No PLPP
+                    </th>
+                    <th className="min-w-[150px] p-3 font-medium text-white">
+                      Periode & Tahun
                     </th>
                     <th className="min-w-[50px] p-3 font-medium text-white">
                       ISO
@@ -235,7 +241,7 @@ const MyAuditList: React.FC = () => {
                         .fill([])
                         .map((basoka: any, theindex: number) => (
                           <tr key={theindex}>
-                            {Array(12)
+                            {Array(14)
                               .fill([])
                               .map((aduhai: any, auindex: number) => (
                                 <TableFilteringReal key={auindex} />
@@ -246,6 +252,66 @@ const MyAuditList: React.FC = () => {
                         (item: HeaderData, index: number) => (
                           <tr key={index}>
                             <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                              <div className="flex justify-start items-center gap-2">
+                                {item?.kategori_temuan?.some(
+                                  (cat: string) => cat == 'mayor',
+                                ) ? (
+                                  <div className="group relative transition-all inline-block">
+                                    <span className="px-2.5 py-[0.25px] rounded-full bg-red-400"></span>
+                                    <div className="absolute transition-all left-0 top-full z-20 mt-2 w-[150px] rounded bg-black border-white px-3.5 py-1.5 text-sm font-medium text-white scale-0 group-hover:scale-100">
+                                      <span className="absolute top-[-2px] left-2 z-10 h-2 w-2 rotate-45 rounded-sm bg-black"></span>
+                                      {
+                                        item?.kategori_temuan?.filter(
+                                          (cihuy: string) => cihuy == 'mayor',
+                                        ).length
+                                      }{' '}
+                                      Temuan Mayor
+                                    </div>
+                                  </div>
+                                ) : (
+                                  ''
+                                )}
+                                {item?.kategori_temuan?.some(
+                                  (cat: string) => cat == 'minor',
+                                ) ? (
+                                  <div className="group relative transition-all inline-block">
+                                    <span className="px-2.5 py-[0.25px] rounded-full bg-yellow-400"></span>
+                                    <div className="absolute transition-all left-0 top-full z-20 mt-2 w-[150px] rounded bg-black border-white px-3.5 py-1.5 text-sm font-medium text-white scale-0 group-hover:scale-100">
+                                      <span className="absolute top-[-2px] left-2 z-10 h-2 w-2 rotate-45 rounded-sm bg-black"></span>
+                                      {
+                                        item?.kategori_temuan?.filter(
+                                          (cihuy: string) => cihuy == 'minor',
+                                        ).length
+                                      }{' '}
+                                      Temuan Minor
+                                    </div>
+                                  </div>
+                                ) : (
+                                  ''
+                                )}
+                                {item?.kategori_temuan?.some(
+                                  (cat: string) => cat == 'observasi',
+                                ) ? (
+                                  <div className="group relative transition-all inline-block">
+                                    <span className="px-2.5 py-[0.25px] rounded-full bg-blue-400"></span>
+                                    <div className="absolute transition-all left-0 top-full z-20 mt-2 w-[170px] rounded bg-black border-white px-3.5 py-1.5 text-sm font-medium text-white scale-0 group-hover:scale-100">
+                                      <span className="absolute top-[-2px] left-2 z-10 h-2 w-2 rotate-45 rounded-sm bg-black"></span>
+                                      {
+                                        item?.kategori_temuan?.filter(
+                                          (cihuy: string) =>
+                                            cihuy == 'observasi',
+                                        ).length
+                                      }{' '}
+                                      Temuan Observasi
+                                    </div>
+                                  </div>
+                                ) : (
+                                  ''
+                                )}
+                              </div>
+                            </td>
+
+                            <td className="border-b border-[#eee] dark:border-strokedark p-3">
                               <h5 className="font-medium text-black dark:text-white">
                                 {index + 1}
                               </h5>
@@ -253,6 +319,11 @@ const MyAuditList: React.FC = () => {
                             <td className="border-b border-[#eee] dark:border-strokedark p-3">
                               <h5 className="font-medium text-black dark:text-white">
                                 {item?.no_plpp}
+                              </h5>
+                            </td>
+                            <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                              <h5 className="font-medium text-black dark:text-white">
+                                {item?.periode} | {item?.tahun}
                               </h5>
                             </td>
                             <td className="border-b border-[#eee] dark:border-strokedark p-3">
@@ -313,7 +384,7 @@ const MyAuditList: React.FC = () => {
                             </td>
                             <td className="border-b border-[#eee] dark:border-strokedark p-3">
                               <h5 className="font-medium text-black dark:text-white">
-                                {item?.is_responded ? (
+                                {item?.is_responded == '1' ? (
                                   <BsFillCheckCircleFill className="text-lime-500 text-2xl" />
                                 ) : (
                                   <BsFillXCircleFill className="text-red-500 text-2xl" />
@@ -337,7 +408,7 @@ const MyAuditList: React.FC = () => {
                                     onClick={() =>
                                       handleDetail(item?.id, 'edit')
                                     }
-                                    className="flex disabled:opacity-20 text-white bg-yellow-500 px-2.5 py-1.5 rounded-md justify-start items-center gap-3 hover:bg-yellow-800 transition-all"
+                                    className="flex disabled:opacity-0 text-white bg-yellow-500 px-2.5 py-1.5 rounded-md justify-start items-center gap-3 hover:bg-yellow-800 transition-all"
                                   >
                                     <FiPenTool className="" />
                                     <span className="font-medium">Edit</span>

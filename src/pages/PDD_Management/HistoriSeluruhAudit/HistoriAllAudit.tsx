@@ -53,7 +53,7 @@ const HistoriAllAudit: React.FC = () => {
           meta: res?.meta,
         });
         res?.all_audits?.some((item: any) =>
-          !item?.is_responded
+          item?.is_responded == '0'
             ? setAvailableBroadcast(true)
             : setAvailableBroadcast(false),
         );
@@ -111,8 +111,8 @@ const HistoriAllAudit: React.FC = () => {
       api.sendEmailAudit(auditee_id, setDisabled),
       {
         loading: `Mengirim email ke ${auditee_name}...`,
-        success: 'Pengingat berhasil dikirim ke email auditee',
-        error: 'Pengingat gagal dikirim ke email auditee',
+        success: `Pengingat berhasil dikirim ke ${auditee_name}`,
+        error: `Pengingat gagal dikirim ke ${auditee_name}`,
       },
       {
         style: {
@@ -189,9 +189,9 @@ const HistoriAllAudit: React.FC = () => {
                   <span className="font-medium">Broadcast Auditee</span>{' '}
                 </div>
               </button>
-              <div className="absolute right-full top-1/2 z-20 mr-3 group-hover:cursor-help -translate-y-1/2 w-full rounded bg-black px-4.5 py-1.5 text-sm font-medium text-white opacity-0 group-hover:opacity-100">
+              <div className="absolute right-full top-1/2 z-20 mr-3 group-hover:cursor-help -translate-y-1/2 w-[300px] rounded bg-black px-4.5 py-1.5 text-sm font-medium text-white opacity-0 group-hover:opacity-100">
                 <span className="absolute right-[-3px] top-1/2 -z-10 h-2 w-2 -translate-y-1/2 rotate-45 rounded-sm bg-black"></span>
-                Mengingatkan Seluruh Auditee Untuk Penyelesaian Audit
+                Mengingatkan Seluruh Auditee Untuk Penyelesaian Audit via Email
               </div>
             </div>
           ) : (
@@ -241,10 +241,19 @@ const HistoriAllAudit: React.FC = () => {
                 <thead>
                   <tr className="bg-slate-700 text-left">
                     <th className="min-w-[50px] p-3 font-medium text-white">
+                      {/*  */}
+                    </th>
+                    <th className="min-w-[50px] p-3 font-medium text-white">
                       No
                     </th>
                     <th className="min-w-[50px] p-3 font-medium text-white">
                       No PLPP
+                    </th>
+                    <th className="min-w-[150px] p-3 font-medium text-white">
+                      Periode & Tahun
+                    </th>
+                    <th className="min-w-[50px] p-3 font-medium text-white">
+                      ISO
                     </th>
                     <th className="min-w-[120px] p-3 font-medium text-white">
                       Grup Auditor
@@ -279,7 +288,7 @@ const HistoriAllAudit: React.FC = () => {
                         .fill([])
                         .map((basoka: any, theindex: number) => (
                           <tr key={theindex}>
-                            {Array(11)
+                            {Array(14)
                               .fill([])
                               .map((aduhai: any, auindex: number) => (
                                 <TableFilteringReal key={auindex} />
@@ -289,6 +298,65 @@ const HistoriAllAudit: React.FC = () => {
                     : audits?.all_audits.map((item: any, index: number) => (
                         <tr key={index}>
                           <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                            <div className="flex justify-start items-center gap-2">
+                              {item?.kategori_temuan?.some(
+                                (cat: string) => cat == 'mayor',
+                              ) ? (
+                                <div className="group relative transition-all inline-block">
+                                  <span className="px-2.5 py-[0.25px] rounded-full bg-red-400"></span>
+                                  <div className="absolute transition-all left-0 top-full z-20 mt-2 w-[150px] rounded bg-black border-white px-3.5 py-1.5 text-sm font-medium text-white scale-0 group-hover:scale-100">
+                                    <span className="absolute top-[-2px] left-2 z-10 h-2 w-2 rotate-45 rounded-sm bg-black"></span>
+                                    {
+                                      item?.kategori_temuan?.filter(
+                                        (cihuy: string) => cihuy == 'mayor',
+                                      ).length
+                                    }{' '}
+                                    Temuan Mayor
+                                  </div>
+                                </div>
+                              ) : (
+                                ''
+                              )}
+                              {item?.kategori_temuan?.some(
+                                (cat: string) => cat == 'minor',
+                              ) ? (
+                                <div className="group relative transition-all inline-block">
+                                  <span className="px-2.5 py-[0.25px] rounded-full bg-yellow-400"></span>
+                                  <div className="absolute transition-all left-0 top-full z-20 mt-2 w-[150px] rounded bg-black border-white px-3.5 py-1.5 text-sm font-medium text-white scale-0 group-hover:scale-100">
+                                    <span className="absolute top-[-2px] left-2 z-10 h-2 w-2 rotate-45 rounded-sm bg-black"></span>
+                                    {
+                                      item?.kategori_temuan?.filter(
+                                        (cihuy: string) => cihuy == 'minor',
+                                      ).length
+                                    }{' '}
+                                    Temuan Minor
+                                  </div>
+                                </div>
+                              ) : (
+                                ''
+                              )}
+                              {item?.kategori_temuan?.some(
+                                (cat: string) => cat == 'observasi',
+                              ) ? (
+                                <div className="group relative transition-all inline-block">
+                                  <span className="px-2.5 py-[0.25px] rounded-full bg-blue-400"></span>
+                                  <div className="absolute transition-all left-0 top-full z-20 mt-2 w-[170px] rounded bg-black border-white px-3.5 py-1.5 text-sm font-medium text-white scale-0 group-hover:scale-100">
+                                    <span className="absolute top-[-2px] left-2 z-10 h-2 w-2 rotate-45 rounded-sm bg-black"></span>
+                                    {
+                                      item?.kategori_temuan?.filter(
+                                        (cihuy: string) => cihuy == 'observasi',
+                                      ).length
+                                    }{' '}
+                                    Temuan Observasi
+                                  </div>
+                                </div>
+                              ) : (
+                                ''
+                              )}
+                            </div>
+                          </td>
+
+                          <td className="border-b border-[#eee] dark:border-strokedark p-3">
                             <h5 className="font-medium text-black dark:text-white">
                               {index + 1}
                             </h5>
@@ -296,6 +364,16 @@ const HistoriAllAudit: React.FC = () => {
                           <td className="border-b border-[#eee] dark:border-strokedark p-3">
                             <h5 className="font-medium text-black dark:text-white">
                               {item?.no_plpp}
+                            </h5>
+                          </td>
+                          <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                            <h5 className="font-medium text-black dark:text-white">
+                              {item?.periode} | {item?.tahun}
+                            </h5>
+                          </td>
+                          <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                            <h5 className="font-medium text-black dark:text-white">
+                              {item?.static_data?.iso?.kode}
                             </h5>
                           </td>
                           <td className="border-b border-[#eee] dark:border-strokedark p-3">
@@ -340,7 +418,7 @@ const HistoriAllAudit: React.FC = () => {
                                   Open
                                 </span>
                               ) : (
-                                <span className="rounded-md px-2 bg-lime-300 py-1">
+                                <span className="rounded-md px-2 bg-red-300 py-1">
                                   Close
                                 </span>
                               )}
@@ -348,7 +426,7 @@ const HistoriAllAudit: React.FC = () => {
                           </td>
                           <td className="border-b border-[#eee] dark:border-strokedark p-3">
                             <h5 className="font-medium text-black dark:text-white">
-                              {item?.is_responded ? (
+                              {item?.is_responded == '1' ? (
                                 <BsCheckCircleFill className="text-lime-500 text-2xl" />
                               ) : (
                                 <BsXCircleFill className="text-red-500 text-2xl" />
@@ -364,12 +442,13 @@ const HistoriAllAudit: React.FC = () => {
                                 <FiEye className="" />
                                 <span className="font-medium">Detail</span>
                               </button>
-                              {!item?.is_responded ? (
+                              {item?.is_responded == '0' ? (
                                 <button
                                   onClick={() =>
                                     handleReminder(
                                       item?.auditee_id,
-                                      item?.auditee?.user?.nama_lengkap,
+                                      item?.static_data?.auditee?.user
+                                        ?.nama_lengkap,
                                     )
                                   }
                                   disabled={

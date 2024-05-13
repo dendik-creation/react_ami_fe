@@ -83,7 +83,7 @@ export const profileApi = {
     } catch (error) {
       setChecked(false);
       toastFire({
-        message: 'Password lama salah, coba lagi',
+        message: 'Password sekarang salah, coba lagi',
         status: false,
       });
       await console.info(error);

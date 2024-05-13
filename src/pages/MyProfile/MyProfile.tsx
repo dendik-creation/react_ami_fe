@@ -44,10 +44,12 @@ const MyProfile: React.FC = () => {
     current_password: string;
     new_password: string;
     new_password_confirm: string;
+    tryCount: number;
   }>({
     current_password: '',
     new_password: '',
     new_password_confirm: '',
+    tryCount: 0,
   });
   const roleList: string[] = ['auditee', 'auditor', 'pdd', 'management'];
 
@@ -76,6 +78,7 @@ const MyProfile: React.FC = () => {
         current_password: '',
         new_password: '',
         new_password_confirm: '',
+        tryCount: 0,
       });
     }, 300);
   };
@@ -117,14 +120,29 @@ const MyProfile: React.FC = () => {
     }));
   };
 
+  useEffect(() => {
+    console.log(password);
+    if (password.tryCount >= 3) {
+      toastFire({
+        message: 'Hubungi Pdd untuk reset password',
+        status: false,
+      });
+    }
+  }, [password.tryCount]);
+
   const handleCheckPassword = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setChecking(true);
-    profileApi.checkCurrentPass(
-      password.current_password,
-      setChecked,
-      setChecking,
-    );
+    profileApi
+      .checkCurrentPass(password.current_password, setChecked, setChecking)
+      .finally(() => {
+        setTimeout(() => {
+          setPassword((prev: any) => ({
+            ...prev,
+            tryCount: parseInt(prev?.tryCount) + 1,
+          }));
+        }, 500);
+      });
   };
 
   const handleSubmitProfile = (e: FormEvent<HTMLFormElement>) => {
@@ -336,21 +354,38 @@ const MyProfile: React.FC = () => {
                             </div>
                           </div>
 
-                          <div className="mb-5.5">
-                            <h3 className="text-sm mb-3">
-                              Role / Hak Akses {'(ReadOnly)'}
-                            </h3>
-                            <div className="flex justify-start items-start gap-6 flex-col md:flex-row md:items-center">
-                              {roleList?.map((item: string, index: number) => (
-                                <div className="" key={index}>
-                                  <SwitcherRole
-                                    role={item}
-                                    user={user}
-                                    setUser={setUser}
-                                    isDisabled={true}
-                                  />
-                                </div>
-                              ))}
+                          <div className="mb-5.5 flex justify-start gap-30 items-center">
+                            <div className="">
+                              <h3 className="text-sm mb-3">
+                                Role / Hak Akses {'(ReadOnly)'}
+                              </h3>
+                              <div className="flex justify-start items-start gap-6 flex-col md:flex-row md:items-center">
+                                {roleList?.map(
+                                  (item: string, index: number) => (
+                                    <div className="" key={index}>
+                                      <SwitcherRole
+                                        role={item}
+                                        user={user}
+                                        setUser={setUser}
+                                        isDisabled={true}
+                                      />
+                                    </div>
+                                  ),
+                                )}
+                              </div>
+                            </div>
+                            <div className="">
+                              <h3 className="text-sm mb-3">
+                                Role Aktif - Periode Sekarang (ReadOnly)
+                              </h3>
+                              <div className="">
+                                <SwitcherRole
+                                  role={user?.periode_active_role}
+                                  user={user}
+                                  setUser={setUser}
+                                  isDisabled={true}
+                                />
+                              </div>
                             </div>
                           </div>
 

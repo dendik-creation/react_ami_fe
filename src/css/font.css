@@ -1,7 +1,13 @@
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap'); */
+/* @import url('https://db.onlinewebfonts.com/c/5c442d1d819b8d9a7edc112c2665ef93?family=Output+Sans+Regular'); */
+
+@font-face {
+  font-family: 'Output Sans Regular';
+  src: url('/fonts/OutputSans%20Regular.ttf') format('truetype');
+}
 
 * {
-  font-family: 'Quicksand', sans-serif;
+  font-family: 'Output Sans Regular', sans-serif;
 }
 
 .filepond--item {

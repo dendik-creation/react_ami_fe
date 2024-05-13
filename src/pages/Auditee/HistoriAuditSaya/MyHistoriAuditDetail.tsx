@@ -11,14 +11,20 @@ import LoadFetch from '../../../common/Loader/LoadFetch';
 import { Splide, SplideSlide } from '@splidejs/react-splide';
 import { DetailData } from '../../Auditor/NewAudit/NewAuditInterface';
 import { apiBeBaseUrl } from '../../../utils/constant';
-import { FiDownloadCloud, FiFileText } from 'react-icons/fi';
+import { FiDownloadCloud, FiEye, FiFileText } from 'react-icons/fi';
 import 'ldrs/ring';
+import PdfPreviewModal from '../ResponAudit/components/PdfPreviewModal';
+import SelectedPdfModal from '../../../components/Modal/SelectedPdfModal';
 
 const MyHistoriAuditDetail: React.FC = () => {
   const [audits, setAudits] = useState<MyDetailAudit | undefined>();
   const [loading, setLoading] = useState<boolean>(true);
   const [breadcumbDesc, setDesc] = useState<string>('');
   const { id } = useParams();
+
+  const [previewPdfModal, setPdfModal] = useState<boolean>(false);
+  const [pdfPath, setPdfPath] = useState<string>('');
+
   useEffect(() => {
     api
       .myAuditDetailAsAuditor(id, setLoading)
@@ -37,6 +43,11 @@ const MyHistoriAuditDetail: React.FC = () => {
 
   const [downloading, setDownloading] = useState<boolean>(false);
 
+  const handlePreviewModal = (pathfile: string) => {
+    setPdfModal(true);
+    setPdfPath(pathfile);
+  };
+
   const handleDownloadAttachment = async (url: string) => {
     setDownloading(true);
     apiResponAudit.downloadFile(url, setDownloading);
@@ -44,6 +55,12 @@ const MyHistoriAuditDetail: React.FC = () => {
   return (
     <>
       <DefaultLayout>
+        <SelectedPdfModal
+          previewPdfModal={previewPdfModal}
+          setPdfModal={setPdfModal}
+          pdfFile={pdfPath}
+        />
+
         <Transition
           show={loading}
           enter="transform transition duration-300"
@@ -394,19 +411,15 @@ const MyHistoriAuditDetail: React.FC = () => {
                                     <div className="grid lg:grid-cols-4 w-full md:grid-cols-3 grid-cols-1 gap-3 mt-4">
                                       {item?.attachment?.map(
                                         (item: any, index: number) => (
-                                          <button
+                                          <div
                                             key={index}
-                                            disabled={downloading}
-                                            onClick={() =>
-                                              handleDownloadAttachment(item)
-                                            }
-                                            className="overflow-hidden disabled:cursor-wait relative md:h-44 h-40 w-full border-2 border-slate-400 border-dashed cursor-pointer group rounded-md"
+                                            className="overflow-hidden cursor-default relative md:h-44 h-40 w-full border-2 border-slate-400 border-dashed group rounded-md"
                                           >
                                             {item.split('.')[1] == 'jpg' ||
                                             item.split('.')[1] == 'png' ||
                                             item.split('.')[1] == 'jpeg' ? (
                                               <div className="w-full h-full relative object-cover">
-                                                <div className="absolute opacity-0 group-hover:opacity-100 z-20 transition-all bg-black/60 top-0 left-0 flex justify-center items-center flex-col w-full h-full gap-2">
+                                                <div className="absolute opacity-0 group-hover:opacity-100 z-20 transition-all top-0 left-0 flex justify-center items-center flex-col w-full h-full gap-2">
                                                   {downloading ? (
                                                     <div className="flex flex-col gap-2 justify-center items-center">
                                                       <l-ring
@@ -417,12 +430,21 @@ const MyHistoriAuditDetail: React.FC = () => {
                                                       />
                                                     </div>
                                                   ) : (
-                                                    <div className="flex flex-col gap-2 justify-center items-center">
+                                                    <button
+                                                      onClick={() =>
+                                                        handleDownloadAttachment(
+                                                          item,
+                                                        )
+                                                      }
+                                                      disabled={downloading}
+                                                      type="button"
+                                                      className="flex flex-col disabled:cursor-wait gap-2 bg-slate-800/70 border-slate-50 border border-dashed px-6 py-3 rounded-md justify-center items-center"
+                                                    >
                                                       <FiDownloadCloud className="text-5xl text-white" />
                                                       <span className="font-bold text-white">
                                                         Download
                                                       </span>
-                                                    </div>
+                                                    </button>
                                                   )}
                                                 </div>
                                                 <img
@@ -432,29 +454,59 @@ const MyHistoriAuditDetail: React.FC = () => {
                                                   alt={'UnLoad'}
                                                 />
                                                 <div className="absolute left-0 bg-slate-800/70  bottom-0 py-1 w-full items-center justify-center text-white">
-                                                  <span className="text-[13.5px]">
+                                                  <span className="text-[13.5px] flex justify-center text-center w-full">
                                                     {item.split('/').pop()}
                                                   </span>
                                                 </div>
                                               </div>
                                             ) : (
-                                              <div className="w-full h-full object-cover">
-                                                <div className="absolute opacity-0 group-hover:opacity-100 transition-all z-20 bg-black/80 top-0 left-0 flex justify-center items-center flex-col w-full h-full gap-2">
+                                              <div className="w-full h-full relative object-cover">
+                                                <div className="absolute opacity-0 group-hover:opacity-100 z-99 transition-all  top-0 left-0 flex justify-center items-center flex-col w-full h-full gap-2">
                                                   {downloading ? (
                                                     <div className="flex flex-col gap-2 justify-center items-center">
                                                       <l-ring
                                                         size={60}
                                                         stroke={20}
                                                         speed={2}
-                                                        color={'#fff'}
+                                                        color={'#1c1c1c'}
                                                       />
                                                     </div>
                                                   ) : (
-                                                    <div className="flex flex-col gap-2 justify-center items-center">
-                                                      <FiDownloadCloud className="text-5xl text-white" />
-                                                      <span className="font-bold text-white">
-                                                        Download
-                                                      </span>
+                                                    <div className="flex justify-center mb-5 items-center gap-4">
+                                                      <button
+                                                        onClick={() =>
+                                                          handleDownloadAttachment(
+                                                            item,
+                                                          )
+                                                        }
+                                                        disabled={downloading}
+                                                        type="button"
+                                                        className="flex flex-col w-28 gap-2 bg-slate-800/50 transition-all hover:bg-slate-800/90 px-6 py-3 rounded-md justify-center items-center"
+                                                      >
+                                                        <FiDownloadCloud className="text-3xl text-white" />
+                                                        <span className="font-bold text-white">
+                                                          Download
+                                                        </span>
+                                                      </button>
+                                                      {item.split('.')[1] ==
+                                                      'pdf' ? (
+                                                        <button
+                                                          onClick={() =>
+                                                            handlePreviewModal(
+                                                              `${apiBeBaseUrl}/storage/${item}`,
+                                                            )
+                                                          }
+                                                          type="button"
+                                                          className="flex flex-col w-28 gap-2 bg-slate-800/50 transition-all hover:bg-slate-800/90 px-6 py-3 rounded-md justify-center items-center"
+                                                        >
+                                                          <FiEye className="text-3xl text-white" />
+                                                          <span className="font-bold text-white">
+                                                            Preview
+                                                          </span>
+                                                        </button>
+                                                      ) : (
+                                                        ''
+                                                      )}
                                                     </div>
                                                   )}
                                                 </div>
@@ -463,13 +515,13 @@ const MyHistoriAuditDetail: React.FC = () => {
                                                   <span className="text-slate-500 text-4x font-bold uppercase">
                                                     {item.split('.')[1]}
                                                   </span>
-                                                  <span className="text-sm absolute  bg-slate-800/70 bottom-0 py-1 left-0 w-full justify-center font-semibold text-white">
+                                                  <span className="text-sm absolute bg-slate-800/70 bottom-0 py-1 text-ellipsis whitespace-nowrap left-0 w-full justify-center font-semibold text-white items-center text-center">
                                                     {item.split('/').pop()}
                                                   </span>
                                                 </div>
                                               </div>
                                             )}
-                                          </button>
+                                          </div>
                                         ),
                                       )}
                                     </div>

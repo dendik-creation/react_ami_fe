@@ -22,7 +22,7 @@ interface Dataset {
 const MyAudit: React.FC<Dataset> = ({ dataset }) => {
   const options: ApexOptions = {
     chart: {
-      fontFamily: 'Quicksand Semibold',
+      fontFamily: 'Output Sans Regular',
       type: 'bar',
       height: 335,
       stacked: true,

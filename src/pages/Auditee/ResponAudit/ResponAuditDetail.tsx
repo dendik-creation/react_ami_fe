@@ -9,7 +9,7 @@ import {
   HeaderData,
   NewAuditType,
 } from '../../Auditor/NewAudit/NewAuditInterface';
-import { FiSend } from 'react-icons/fi';
+import { FiFileText, FiSend } from 'react-icons/fi';
 import { parseDateHaha } from '../../../api/date_parser';
 import ErrorModal from '../../../components/Modal/ErrorModal';
 import ConfirmSubmit from './components/ConfirmSubmit';
@@ -22,14 +22,18 @@ import { FilePond, registerPlugin } from 'react-filepond';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size';
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
+import FilePondPluginFilePoster from 'filepond-plugin-file-poster';
 
+import 'filepond-plugin-file-poster/dist/filepond-plugin-file-poster.css';
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
 import 'filepond/dist/filepond.min.css';
 import { apiBeBaseUrl } from '../../../utils/constant';
+import PdfPreviewModal from './components/PdfPreviewModal';
 
 registerPlugin(FilePondPluginFileValidateType);
 registerPlugin(FilePondPluginFileValidateSize);
 registerPlugin(FilePondPluginImagePreview);
+registerPlugin(FilePondPluginFilePoster);
 
 const allowedFormatFile = [
   'application/pdf',
@@ -68,6 +72,8 @@ const ResponAuditDetail: React.FC = () => {
   const [formRespon, setFormRespon] = useState<FormRespon[]>([]);
   const [sended, setSended] = useState<any>();
 
+  const [pdfFiles, setPdfFiles] = useState<any>([]);
+
   const [showModal, setShowModal] = useState<{
     error_modal: boolean;
     confirm_modal: boolean;
@@ -77,6 +83,14 @@ const ResponAuditDetail: React.FC = () => {
   });
 
   const [historyModal, setShowHistory] = useState<{
+    toaster: boolean;
+    modal: boolean;
+  }>({
+    toaster: false,
+    modal: false,
+  });
+
+  const [previewPdfModal, setPdfModal] = useState<{
     toaster: boolean;
     modal: boolean;
   }>({
@@ -130,8 +144,29 @@ const ResponAuditDetail: React.FC = () => {
         newFiles[index] = e?.map((item: any) => (item.file ? item.file : item));
         return newFiles;
       });
+      setPdfFiles((prevFiles: any) => {
+        const newPdf = [...prevFiles];
+        newPdf[index] = e
+          ?.filter((item: any) => item.file.type == 'application/pdf')
+          .map((item: any) => {
+            return {
+              filename: item.file.name,
+              file: URL.createObjectURL(item.file),
+            };
+          });
+        return newPdf;
+      });
     }
   };
+
+  useEffect(() => {
+    const isHasFile = pdfFiles.some((item: any) => item.length > 0);
+    if (isHasFile) {
+      setPdfModal({ ...previewPdfModal, toaster: true });
+    } else {
+      setPdfModal({ ...previewPdfModal, toaster: false });
+    }
+  }, [pdfFiles]);
 
   const handleInit = () => {
     const fileExist = data?.detail_audit?.map((item: any) => {
@@ -155,8 +190,9 @@ const ResponAuditDetail: React.FC = () => {
   };
 
   useEffect(() => {
-    console.log(files);
-  }, [files]);
+    console.log(pdfFiles);
+    // console.log(files);
+  }, [pdfFiles]);
 
   const handleSubmit = (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -195,6 +231,12 @@ const ResponAuditDetail: React.FC = () => {
         historyDept={historyDept}
       />
 
+      <PdfPreviewModal
+        previewPdfModal={previewPdfModal}
+        setPdfModal={setPdfModal}
+        pdfFiles={pdfFiles}
+      />
+
       {/* Toaster History */}
       <Transition
         show={historyModal.toaster}
@@ -206,13 +248,35 @@ const ResponAuditDetail: React.FC = () => {
         leaveTo="opacity-0 translate-y-24"
         className="fixed bottom-8 right-8 z-999"
       >
-        <div className="bg-[#333] flex justify-start items-center gap-4 text-white px-4 py-3 text-lg rounded-md">
+        <div className="bg-[#333] flex justify-start items-center gap-4 text-white px-3 py-2 text-md rounded-md">
           <span>History Audit Di Temukan</span>
           <button
             onClick={() => setShowHistory({ ...historyModal, modal: true })}
-            className="text-xl bg-[#2c2a2a] px-4 py-2 hover:bg-[#242323] text-white rounded-md"
+            className="text-md bg-[#2c2a2a] px-4 py-2 hover:bg-[#242323] text-white rounded-md"
           >
             <BsFillBuildingFill />
+          </button>
+        </div>
+      </Transition>
+
+      {/* Preview Pdf */}
+      <Transition
+        show={previewPdfModal.toaster}
+        enter="transform transition duration-300 delay-[400ms]"
+        enterFrom="opacity-0 translate-y-24"
+        enterTo="opacity-100 translate-y-0"
+        leave="transform duration-300 transition ease-in-out delay-[400ms]"
+        leaveFrom="opacity-100 translate-y-0"
+        leaveTo="opacity-0 translate-y-24"
+        className="fixed bottom-8 left-80 z-999"
+      >
+        <div className="bg-[#333] flex justify-start items-center gap-4 text-white px-3 py-2 text-md rounded-md">
+          <span>Preview File PDF</span>
+          <button
+            onClick={() => setPdfModal({ ...previewPdfModal, modal: true })}
+            className="text-md bg-[#2c2a2a] px-4 py-2 hover:bg-[#242323] text-white rounded-md"
+          >
+            <FiFileText />
           </button>
         </div>
       </Transition>
@@ -580,6 +644,7 @@ const ResponAuditDetail: React.FC = () => {
                                 allowFileSizeValidation={true}
                                 allowRevert={true}
                                 maxFileSize={'2MB'}
+                                allowFilePoster={true}
                                 labelIdle="Tarik dan Lepas, Atau Cari File"
                                 labelMaxFileSizeExceeded={
                                   'Ukuran File Terlalu Besar'

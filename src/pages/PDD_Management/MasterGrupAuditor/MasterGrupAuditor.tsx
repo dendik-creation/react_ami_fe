@@ -142,7 +142,13 @@ const MasterGrupAuditor: React.FC = () => {
               }
             />
             <button
-              onClick={() => navigate('/master/grup-auditor/create')}
+              onClick={() =>
+                navigate(
+                  `/master/grup-auditor/create?inc=${
+                    grupList?.data.length + 1
+                  }`,
+                )
+              }
               className="flex text-white bg-yellow-500 px-2.5 py-1.5 rounded-md justify-start items-center gap-3 hover:bg-yellow-700 transition-all"
             >
               <FiPlusSquare className="text-2xl" />

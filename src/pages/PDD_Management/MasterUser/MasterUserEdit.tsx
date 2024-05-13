@@ -20,7 +20,7 @@ interface ListSelect {
 const MasterUserEdit: React.FC = () => {
   const [user, setUser] = useState<User>();
   const [sendForm, setSend] = useState<any>(null);
-  const roleList: string[] = ['auditee', 'auditor', 'pdd', 'management'];
+  const roleList: string[] = ['Auditee', 'Auditor', 'Pdd', 'Management'];
   const [deptList, setDeptList] = useState<ListSelect[] | undefined | null>();
 
   const [showModal, setShowModal] = useState<{
@@ -36,7 +36,18 @@ const MasterUserEdit: React.FC = () => {
   useEffect(() => {
     api
       .getUserDetail(setLoading, id)
-      .then((res) => setUser(res))
+      .then((res) => {
+        const finalres = {
+          ...res,
+          role: res?.role?.map(
+            (item: any) => item.charAt(0).toUpperCase() + item.slice(1),
+          ),
+          periode_active_role:
+            res?.periode_active_role.charAt(0).toUpperCase() +
+            res?.periode_active_role.slice(1),
+        };
+        setUser(finalres);
+      })
       .catch((err) => console.log(err));
     api
       .getDeptList(setLoading)
@@ -44,7 +55,9 @@ const MasterUserEdit: React.FC = () => {
       .catch((err) => console.log(err));
   }, []);
 
-  const handleChange = (e: ChangeEvent<HTMLFormElement | HTMLInputElement>) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLFormElement | HTMLInputElement | HTMLSelectElement>,
+  ) => {
     setUser((prev: any) => ({
       ...prev,
       [e.target.name]: e.target.value,
@@ -72,7 +85,8 @@ const MasterUserEdit: React.FC = () => {
       nama_lengkap: user?.nama_lengkap,
       email: user?.email,
       departemen_id: user?.departemen_id?.value,
-      role: user?.role,
+      role: user?.role?.map((item) => item.toLowerCase()),
+      periode_active_role: user?.periode_active_role?.toLowerCase(),
     });
     // if (user?.role?.includes('auditor')) {
     //   setSend((prev: any) => ({
@@ -194,14 +208,41 @@ const MasterUserEdit: React.FC = () => {
                   />
                 </div>
               </div>
-              <div className="mb-5">
-                <h3 className="font-medium mb-3">Role {'(Hak Akses)'}</h3>
-                <div className="flex justify-start items-start gap-6 flex-col md:flex-row md:items-center">
-                  {roleList?.map((item: string, index: number) => (
-                    <div className="" key={index}>
-                      <SwitcherRole role={item} user={user} setUser={setUser} />
-                    </div>
-                  ))}
+              <div className="mb-5 flex justify-start items-start md:items-center gap-10 md:gap-20 md:flex-row flex-col">
+                <div className="">
+                  <h3 className="font-medium mb-3">Role {'(Hak Akses)'}</h3>
+                  <div className="flex justify-start items-start gap-6 flex-col md:flex-row md:items-center">
+                    {roleList?.map((item: string, index: number) => (
+                      <div className="" key={index}>
+                        <SwitcherRole
+                          role={item}
+                          user={user}
+                          setUser={setUser}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="md:w-1/2 w-full">
+                  <h3 className="font-medium mb-3">Role Periode Sekarang</h3>
+                  <div className="flex justify-start items-start gap-6 flex-col md:flex-row md:items-center">
+                    <select
+                      value={user?.periode_active_role}
+                      required
+                      onChange={handleChange}
+                      name="periode_active_role"
+                      id="periode_active_role"
+                      className={`relative z-20 w-full appearance-none rounded border border-stroke bg-transparent px-2 py-2 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input 
+                      }`}
+                    >
+                      <option value="">Role Periode Sekarang</option>
+                      {user?.role?.map((item: any, index: number) => (
+                        <option key={index} value={item} className="capitalize">
+                          {item}
+                        </option>
+                      ))}
+                    </select>{' '}
+                  </div>
                 </div>
               </div>
 

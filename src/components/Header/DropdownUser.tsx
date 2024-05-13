@@ -62,8 +62,14 @@ const DropdownUser = () => {
           <span className="block font-semibold text-black dark:text-white">
             {credential?.user.nama_lengkap}
           </span>
-          <span className="block text-sm capitalize">
-            {credential?.meta?.active_role}
+          <span className="block text-sm uppercase">
+            {credential?.user?.periode_active_role == 'auditor' &&
+            credential?.meta?.active_role == 'auditor'
+              ? credential?.meta?.active_role
+              : credential?.user?.periode_active_role != 'auditor' &&
+                credential?.meta?.active_role == 'auditor'
+              ? `${credential?.meta?.active_role} - ReadOnly`
+              : credential?.meta?.active_role}
           </span>
         </span>
 

@@ -78,10 +78,10 @@ export const api = {
     }
   },
 
-  async getAuditorListSelect(grup_auditor_id: string | undefined) {
+  async getAuditorListSelect(grup_auditor_id?: string | undefined) {
     try {
       const response = await axiosInstance.get(
-        `/auditor-list-select?grup_auditor_id=${grup_auditor_id}`,
+        `/auditor-list-select?grup_auditor_id=${grup_auditor_id ?? ''}`,
         {
           headers: {
             Authorization: token,
@@ -312,6 +312,13 @@ export const helper = {
         // });
       }
     }
+  },
+
+  grupNameBuilder(increment: string | any) {
+    const year = new Date().getFullYear();
+    const periode = new Date().getMonth() + 1 > 6 ? 2 : 1;
+
+    return `${year}${periode}A${increment}`;
   },
 
   async readyFormSendCreate(data: any) {

@@ -73,32 +73,42 @@ const DetailAudit: React.FC<DetailOfAudit> = ({
   };
 
   const handleAddDetail = () => {
+    setDetail([
+      ...detail,
+      {
+        judul_clausul_id: null,
+        clausul_id: null,
+        sub_clausul_id: null,
+        sub_departemen_id: null,
+        tanggal_audit: new Date().toLocaleDateString('en-CA'),
+        tanggal_realisasi: '',
+        tanggal_target: headerAudit.tanggalForTarget(),
+        kategori: '',
+        jenis_temuan: null,
+        status: 'open',
+        temuan: '',
+      },
+    ]);
     setTimeout(() => {
-      setDetail([
-        ...detail,
-        {
-          judul_clausul_id: null,
-          clausul_id: null,
-          sub_clausul_id: null,
-          sub_departemen_id: null,
-          tanggal_audit: new Date().toLocaleDateString('en-CA'),
-          tanggal_realisasi: '',
-          tanggal_target: headerAudit.tanggalForTarget(),
-          kategori: '',
-          jenis_temuan: null,
-          status: 'open',
-          temuan: '',
-        },
-      ]);
+      const btnNext: HTMLButtonElement | any = document.querySelector(
+        '.splide__arrow--next',
+      );
+      btnNext.click();
     }, 250);
   };
 
   const handleRemoveDetail = (index: number) => {
+    setTimeout(() => {
+      const btnNext: HTMLButtonElement | any = document.querySelector(
+        '.splide__arrow--prev',
+      );
+      btnNext.click();
+    }, 250);
     const values = [...detail];
     values.splice(index, 1);
     setTimeout(() => {
       setDetail(values);
-    }, 250);
+    }, 500);
   };
 
   return (
@@ -169,7 +179,6 @@ const DetailAudit: React.FC<DetailOfAudit> = ({
                         Clausul
                       </label>
                       <ReactSelect
-                        required
                         options={clausulFiltered?.clausul}
                         onChange={(e) => handleSelect(e, 'clausul_id', index)}
                         value={detail[index]?.clausul_id}

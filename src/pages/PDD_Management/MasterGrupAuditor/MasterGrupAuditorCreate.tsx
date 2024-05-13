@@ -3,7 +3,7 @@ import DefaultLayout from '../../../layout/DefaultLayout';
 import { Transition } from '@headlessui/react';
 import Breadcrumb from '../../../components/Breadcrumbs/Breadcrumb';
 import { api, helper } from '../../../api/master_grup_auditor';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import ReactSelect from 'react-select';
 import { FiSave, FiTrash, FiUserPlus } from 'react-icons/fi';
 import ConfirmSubmit from '../../../components/Modal/ConfirmSubmit';
@@ -42,9 +42,18 @@ const MasterGrupAuditorCreate: React.FC = () => {
   });
 
   const [sendForm, setSend] = useState<any>();
+  const location = useLocation();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const incParams = params.get('inc');
+    setGrupAuditor({
+      ...grupAuditor,
+      nama_grup: helper.grupNameBuilder(incParams),
+    });
+  }, [location.search]);
 
   const [loading, setLoading] = useState<boolean>(true);
-  const { id } = useParams();
   useEffect(() => {
     api
       .getAuditorListSelect()
@@ -117,7 +126,6 @@ const MasterGrupAuditorCreate: React.FC = () => {
   return (
     <DefaultLayout>
       <ConfirmSubmit
-        id={id}
         data={sendForm}
         show={showModal.confirm_modal}
         setShowModal={setShowModal}

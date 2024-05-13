@@ -7,7 +7,7 @@ import React, {
 import { User } from '../../../../types/AuditListInterface';
 
 interface SwitcherRoleI {
-  role: string;
+  role: string | undefined | any;
   user: User | undefined;
   setUser: React.Dispatch<React.SetStateAction<User | undefined>>;
   isDisabled?: boolean;
@@ -28,16 +28,27 @@ const SwitcherRole: React.FC<SwitcherRoleI> = ({
     }
   }, []);
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (user?.role?.includes(e.target?.value)) {
+    if (
+      user?.role?.includes(
+        e.target?.value?.charAt(0).toUpperCase() + e.target.value.slice(1),
+      )
+    ) {
       setUser((prev: any) => ({
         ...prev,
-        role: prev?.role?.filter((item: string) => item != e?.target?.value),
+        role: prev?.role?.filter(
+          (item: string) =>
+            item !=
+            e?.target?.value?.charAt(0).toUpperCase() + e.target.value.slice(1),
+        ),
       }));
       setEnabled(false);
     } else {
       setUser((prev: any) => ({
         ...prev,
-        role: [...prev?.role, e?.target?.value],
+        role: [
+          ...prev?.role,
+          e?.target?.value?.charAt(0).toUpperCase() + e.target.value.slice(1),
+        ],
       }));
       setEnabled(true);
     }

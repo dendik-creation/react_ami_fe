@@ -28,6 +28,19 @@ export const api = {
     }
   },
 
+  async editAuditData(id: any) {
+    try {
+      const response = await axiosInstance.get(`/edit-audit-data/${id}`, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
   async subDeptsByDeptId(deptId: number) {
     const response = await axiosInstance.get(
       `/get-auditee-sub-dept/${deptId}`,
@@ -86,8 +99,8 @@ export const parentNewAudit = {
       detailEdited = detail?.map((item: any) => {
         return {
           judul_clausul_id: item?.judul_clausul_id?.value,
-          clausul_id: item?.clausul_id?.value,
-          sub_clausul_id: item?.sub_clausul_id?.value,
+          clausul_id: item?.clausul_id?.value ?? null,
+          sub_clausul_id: item?.sub_clausul_id?.value ?? null,
           sub_departemen_id: item?.sub_departemen_id?.value ?? null,
           kategori: item?.kategori?.value,
           tanggal_audit: item?.tanggal_audit,

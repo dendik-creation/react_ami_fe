@@ -1,25 +1,112 @@
 import { Dialog, Transition, RadioGroup } from '@headlessui/react';
-import React, { Fragment, useState } from 'react';
-import { FiCalendar, FiUnlock } from 'react-icons/fi';
+import React, {
+  ChangeEvent,
+  Fragment,
+  HTMLInputTypeAttribute,
+  useEffect,
+  useState,
+} from 'react';
+import { FiClock, FiUnlock } from 'react-icons/fi';
 import { api } from '../../api/histori_audit';
+import { parseDateHaha } from '../../api/date_parser';
+import { BsHourglass, BsHourglassSplit } from 'react-icons/bs';
+import toastFire from '../../hooks/toastFire';
 
 interface ConfirmSubmitRespon {
   header_id: number | undefined | any;
   show: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<any>>;
+  setSuccess: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const PerpanjangModal: React.FC<ConfirmSubmitRespon> = ({
   header_id,
   show,
   setShowModal,
+  setSuccess,
 }) => {
   const [submitting, setSubmitting] = useState<boolean>(false);
-  const [selectedDay, setSelectedDay] = useState<number>(0);
+  const [selectedDay, setSelectedDay] = useState<any>(0);
+  const [estimatedDay, setEstimatedDay] = useState<any>({
+    days3: '',
+    days7: '',
+    days14: '',
+    days30: '',
+    custom: '',
+  });
+
+  useEffect(() => {
+    handleEstimatedDay();
+  }, []);
+
+  useEffect(() => {
+    if (!show) {
+      setSelectedDay(0);
+    }
+  }, [show]);
+
+  const handleEstimatedDay = () => {
+    const for3days = new Date().setDate(new Date().getDate() + 3);
+    const for7days = new Date().setDate(new Date().getDate() + 7);
+    const for14days = new Date().setDate(new Date().getDate() + 14);
+    const for30days = new Date().setMonth(new Date().getMonth() + 1);
+
+    setEstimatedDay({
+      days3: parseDateHaha(new Date(for3days).toLocaleDateString('en-CA')),
+      days7: parseDateHaha(new Date(for7days).toLocaleDateString('en-CA')),
+      days14: parseDateHaha(new Date(for14days).toLocaleDateString('en-CA')),
+      days30: parseDateHaha(new Date(for30days).toLocaleDateString('en-CA')),
+    });
+  };
+
+  const handleChange = (e: any, from: string) => {
+    if (from == 'input') {
+      if (
+        e.target.value != '' &&
+        e.target.value >= 0 &&
+        e.target.value <= 365
+      ) {
+        setSelectedDay(parseInt(e.target.value) ?? 0);
+        const customDays = new Date().setDate(
+          new Date().getDate() + parseInt(e.target.value) ?? 0,
+        );
+        setEstimatedDay({
+          ...estimatedDay,
+          custom: parseDateHaha(
+            new Date(customDays).toLocaleDateString('en-CA'),
+          ),
+        });
+      } else {
+        toastFire({
+          message: 'Min 1 Hari, Max 365 Hari',
+          status: false,
+        });
+      }
+    } else if (from == 'radio') {
+      const customDays = new Date().setDate(
+        new Date().getDate() + parseInt(e) ?? 0,
+      );
+      setEstimatedDay({
+        ...estimatedDay,
+        custom: parseDateHaha(new Date(customDays).toLocaleDateString('en-CA')),
+      });
+    }
+  };
 
   const handleSubmit = () => {
     setSubmitting(true);
-    api.continueAudit(header_id, selectedDay, setShowModal, setSubmitting);
+    api
+      .continueAudit(header_id, selectedDay, setShowModal, setSubmitting)
+      .then(() => {
+        setTimeout(() => {
+          setSuccess(true);
+        }, 300);
+      })
+      .finally(() => {
+        setTimeout(() => {
+          setSuccess(true);
+        }, 300);
+      });
   };
 
   return (
@@ -54,6 +141,7 @@ const PerpanjangModal: React.FC<ConfirmSubmitRespon> = ({
             >
               <Dialog.Panel className="w-full flex md:flex-row flex-col max-w-6xl gap-8 items-center transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                 <FiUnlock className="text-blue-400 text-6xl" />
+
                 <div className="w-full">
                   <Dialog.Title
                     as="h1"
@@ -69,7 +157,10 @@ const PerpanjangModal: React.FC<ConfirmSubmitRespon> = ({
 
                   <RadioGroup
                     value={selectedDay}
-                    onChange={(e) => setSelectedDay(e)}
+                    onChange={(e) => {
+                      setSelectedDay(e);
+                      handleChange(e, 'radio');
+                    }}
                     className={'mb-6 mt-6'}
                   >
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -77,7 +168,7 @@ const PerpanjangModal: React.FC<ConfirmSubmitRespon> = ({
                         value={'3'}
                         className={({ active, checked }) =>
                           `transition-all w-full  ${
-                            checked
+                            checked || selectedDay == 3
                               ? 'bg-slate-800/75 text-white'
                               : 'border border-dashed border-slate-400'
                           }
@@ -91,17 +182,18 @@ const PerpanjangModal: React.FC<ConfirmSubmitRespon> = ({
                                 <div className="text-sm">
                                   <RadioGroup.Label
                                     as="p"
-                                    className={`font-medium uppercase  ${
+                                    className={`font-medium  ${
                                       checked ? 'text-white' : 'text-gray-900'
                                     }`}
                                   >
-                                    3 Hari
+                                    <span className="">3 Hari Kedepan </span>
+                                    {/* <span>({estimatedDay?.days3})</span> */}
                                   </RadioGroup.Label>
                                 </div>
                               </div>
                               {checked && (
                                 <div className="shrink-0 absolute right-0 text-white">
-                                  <FiCalendar className="h-5.5 w-5.5" />
+                                  <FiClock className="h-5.5 w-5.5" />
                                 </div>
                               )}
                             </div>
@@ -112,7 +204,7 @@ const PerpanjangModal: React.FC<ConfirmSubmitRespon> = ({
                         value={'7'}
                         className={({ active, checked }) =>
                           `transition-all w-full  ${
-                            checked
+                            checked || selectedDay == 7
                               ? 'bg-slate-800/75 text-white'
                               : 'border border-dashed border-slate-400'
                           }
@@ -126,17 +218,18 @@ const PerpanjangModal: React.FC<ConfirmSubmitRespon> = ({
                                 <div className="text-sm">
                                   <RadioGroup.Label
                                     as="p"
-                                    className={`font-medium uppercase  ${
+                                    className={`font-medium  ${
                                       checked ? 'text-white' : 'text-gray-900'
                                     }`}
                                   >
-                                    7 Hari
+                                    <span className="">7 Hari Kedepan </span>
+                                    {/* <span>({estimatedDay?.days7})</span> */}
                                   </RadioGroup.Label>
                                 </div>
                               </div>
                               {checked && (
                                 <div className="shrink-0 absolute right-0 text-white">
-                                  <FiCalendar className="h-5.5 w-5.5" />
+                                  <FiClock className="h-5.5 w-5.5" />
                                 </div>
                               )}
                             </div>
@@ -147,7 +240,7 @@ const PerpanjangModal: React.FC<ConfirmSubmitRespon> = ({
                         value={'14'}
                         className={({ active, checked }) =>
                           `transition-all w-full  ${
-                            checked
+                            checked || selectedDay == 14
                               ? 'bg-slate-800/75 text-white'
                               : 'border border-dashed border-slate-400'
                           }
@@ -161,17 +254,18 @@ const PerpanjangModal: React.FC<ConfirmSubmitRespon> = ({
                                 <div className="text-sm">
                                   <RadioGroup.Label
                                     as="p"
-                                    className={`font-medium uppercase  ${
+                                    className={`font-medium  ${
                                       checked ? 'text-white' : 'text-gray-900'
                                     }`}
                                   >
-                                    14 Hari
+                                    <span className="">14 Hari Kedepan </span>
+                                    {/* <span>({estimatedDay?.days14})</span> */}
                                   </RadioGroup.Label>
                                 </div>
                               </div>
                               {checked && (
                                 <div className="shrink-0 absolute right-0 text-white">
-                                  <FiCalendar className="h-5.5 w-5.5" />
+                                  <FiClock className="h-5.5 w-5.5" />
                                 </div>
                               )}
                             </div>
@@ -182,7 +276,7 @@ const PerpanjangModal: React.FC<ConfirmSubmitRespon> = ({
                         value={'30'}
                         className={({ active, checked }) =>
                           `transition-all w-full  ${
-                            checked
+                            checked || selectedDay == 30
                               ? 'bg-slate-800/75 text-white'
                               : 'border border-dashed border-slate-400'
                           }
@@ -196,17 +290,18 @@ const PerpanjangModal: React.FC<ConfirmSubmitRespon> = ({
                                 <div className="text-sm">
                                   <RadioGroup.Label
                                     as="p"
-                                    className={`font-medium uppercase  ${
+                                    className={`font-medium   ${
                                       checked ? 'text-white' : 'text-gray-900'
                                     }`}
                                   >
-                                    30 Hari
+                                    <span className="">1 Bulan Kedepan </span>
+                                    {/* <span>({estimatedDay?.days30})</span> */}
                                   </RadioGroup.Label>
                                 </div>
                               </div>
                               {checked && (
                                 <div className="shrink-0 absolute right-0 text-white">
-                                  <FiCalendar className="h-5.5 w-5.5" />
+                                  <FiClock className="h-5.5 w-5.5" />
                                 </div>
                               )}
                             </div>
@@ -216,11 +311,58 @@ const PerpanjangModal: React.FC<ConfirmSubmitRespon> = ({
                     </div>
                   </RadioGroup>
 
+                  <div className="relative">
+                    <input
+                      required
+                      autoComplete="off"
+                      className="w-full rounded border border-stroke  py-3 px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                      type="number"
+                      value={selectedDay == 0 ? '' : selectedDay}
+                      onChange={(e) => {
+                        handleChange(e, 'input');
+                      }}
+                      name="selectedday"
+                      id="selectedday"
+                      max={365}
+                      min={0}
+                      placeholder="Atau tetapkan jumlah hari manual"
+                    />
+                    {selectedDay != 0 ? (
+                      <div className="absolute top-1/4 left-12 text-slate-600">
+                        <span className="text-sm"> Hari Kedepan</span>{' '}
+                      </div>
+                    ) : (
+                      ''
+                    )}
+                    <div className="absolute top-1/3 right-0 md:right-16 text-slate-600">
+                      {estimatedDay?.custom != '' &&
+                      selectedDay != 0 &&
+                      selectedDay != null ? (
+                        <div className="group relative transition-all inline-block">
+                          <div className="flex cursor-pointer items-center gap-2 justify-start h-full">
+                            <BsHourglassSplit className="animate-spin-3 text-md" />
+                            <span className="text-sm">
+                              {estimatedDay?.custom}
+                            </span>
+                          </div>{' '}
+                          <div className="absolute right-full top-1/2 z-20 mr-3 transition-all -translate-y-1/2 w-[200px] rounded bg-black px-4.5 py-1.5 text-sm font-medium text-white opacity-0 group-hover:opacity-100">
+                            <span className="absolute right-[-3px] top-1/2 -z-10 h-2 w-2 -translate-y-1/2 rotate-45 rounded-sm bg-black"></span>
+                            Estimasi Tanggal Target Audit
+                          </div>
+                        </div>
+                      ) : (
+                        ''
+                      )}
+                    </div>
+                  </div>
+
                   <div className="mt-4 flex justify-center items-center gap-3">
                     <button
                       type="button"
-                      disabled={submitting}
-                      className="w-full justify-center rounded-md border border-transparent bg-lime-500 px-4 py-2 text-sm font-medium text-slate-200 hover:bg-lime-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-600 focus-visible:ring-offset-2"
+                      disabled={
+                        submitting || selectedDay == 0 || selectedDay == null
+                      }
+                      className="w-full justify-center rounded-md disabled:cursor-not-allowed disabled:opacity-70 border border-transparent bg-lime-500 px-4 py-2 text-sm font-medium text-slate-200 hover:bg-lime-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-600 focus-visible:ring-offset-2"
                       onClick={handleSubmit}
                     >
                       {submitting ? (

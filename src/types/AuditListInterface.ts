@@ -11,6 +11,7 @@ export interface User {
   nama_lengkap: string;
   password?: string;
   username: string;
+  periode_active_role?: string;
   email: string;
   role: string[];
   auditor?: {

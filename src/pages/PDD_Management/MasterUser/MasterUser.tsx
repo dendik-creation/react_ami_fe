@@ -18,6 +18,8 @@ import ConfirmDelete from '../../../components/Modal/ConfirmDelete';
 import LoadFetch from '../../../common/Loader/LoadFetch';
 import ResetPasswordModal from './components/ResetPasswordModal';
 import TableFilteringReal from '../../../common/Loader/TableFilteringReal';
+import { User } from '../../../types/AuditListInterface';
+import { BsCheckCircleFill } from 'react-icons/bs';
 
 const MasterUser: React.FC = () => {
   const [users, SetUsers] = useState<any>();
@@ -219,7 +221,7 @@ const MasterUser: React.FC = () => {
                                 ))}
                             </tr>
                           ))
-                      : users?.data?.data?.map((item: any, index: number) => (
+                      : users?.data?.data?.map((item: User, index: number) => (
                           <tr key={index}>
                             <td className="border-b border-[#eee] dark:border-strokedark p-3">
                               <h5 className="font-medium text-black dark:text-white">
@@ -247,7 +249,7 @@ const MasterUser: React.FC = () => {
                                   {item?.role?.map(
                                     (roleItem: string, roleIndex: number) => (
                                       <li
-                                        className={`capitalize text-sm rounded-md px-2 py-1 ${
+                                        className={`capitalize flex items-center gap-2 text-sm rounded-md px-2 py-1 ${
                                           roleItem == 'auditee'
                                             ? 'bg-slate-100'
                                             : roleItem == 'auditor'
@@ -258,6 +260,19 @@ const MasterUser: React.FC = () => {
                                         }`}
                                         key={roleIndex}
                                       >
+                                        {roleItem ==
+                                        item?.periode_active_role ? (
+                                          <div className="group relative transition-all inline-block">
+                                            <BsCheckCircleFill className="text-green-400 cursor-pointer" />
+                                            <div className="absolute transition-all right-full top-1/2 z-20 mr-3 -translate-y-1/2 w-[200px] rounded bg-black px-4.5 py-1.5 text-sm font-medium text-white opacity-0 group-hover:opacity-100">
+                                              <span className="absolute right-[-3px] top-1/2 -z-10 h-2 w-2 -translate-y-1/2 rotate-45 rounded-sm bg-black"></span>
+                                              Role yang aktif pada periode
+                                              sekarang
+                                            </div>
+                                          </div>
+                                        ) : (
+                                          ''
+                                        )}
                                         {roleItem}
                                       </li>
                                     ),

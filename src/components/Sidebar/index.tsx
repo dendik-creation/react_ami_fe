@@ -235,6 +235,14 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
             <FiGithub className="text-slate-500 text-3xl transition-all hover:text-slate-50" />
           </NavLink> */}
           <div className="text-slate-400">
+            <div className="text-md font-semibold">
+              {new Date().getFullYear()}
+            </div>
+            <div className="text-sm">
+              Periode {new Date().getMonth() + 1 > 6 ? 2 : 1}
+            </div>
+          </div>
+          <div className="text-slate-400">
             <div className="text-md font-semibold">ISO</div>
             <div className="text-sm">{credential?.meta?.kode_iso}</div>
           </div>

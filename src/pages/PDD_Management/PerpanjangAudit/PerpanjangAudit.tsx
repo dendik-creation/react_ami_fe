@@ -5,21 +5,16 @@ import { Transition } from '@headlessui/react';
 import { HeaderData } from '../../Auditor/NewAudit/NewAuditInterface';
 import { api } from '../../../api/histori_audit';
 import {
-  FiBell,
-  FiCheckCircle,
   FiChevronLeft,
   FiChevronRight,
-  FiEye,
   FiInfo,
   FiUnlock,
-  FiXCircle,
 } from 'react-icons/fi';
-import { NavigateFunction, useNavigate } from 'react-router-dom';
 import LoadFetch from '../../../common/Loader/LoadFetch';
-import toast from 'react-hot-toast';
-import { credential } from '../../../utils/constant';
 import PerpanjangModal from '../../../components/Modal/PerpanjangModal';
 import { parseDateHaha } from '../../../api/date_parser';
+import { BsCheckCircleFill, BsXCircleFill } from 'react-icons/bs';
+import TableFilteringReal from '../../../common/Loader/TableFilteringReal';
 
 interface metaPagination {
   current_page: number;
@@ -57,6 +52,7 @@ const PerpanjangAudit: React.FC = () => {
   }, []);
   useEffect(() => {
     if (successPerpanjang == true) {
+      setLoading(true);
       api
         .auditClosedNotResponded(setLoading, 1, setPaginating)
         .then((res) => {
@@ -96,6 +92,7 @@ const PerpanjangAudit: React.FC = () => {
         header_id={headerIdPerpanjang}
         show={showModal}
         setShowModal={setShowModal}
+        setSuccess={setSuccess}
       />
       <Transition
         show={loading}
@@ -123,7 +120,7 @@ const PerpanjangAudit: React.FC = () => {
           <Breadcrumb
             pageName="Perpanjang Audit"
             description={
-              'Audit yang dianggap selesai tetapi belum direspon akan ditampilkan disini'
+              'Audit yang belum direspon hingga melebihi tanggal target akan ditampilkan disini'
             }
           />
         </Transition>
@@ -145,6 +142,9 @@ const PerpanjangAudit: React.FC = () => {
               <table className="w-full table-auto mb-4">
                 <thead>
                   <tr className="bg-slate-700 text-left">
+                    <th className="min-w-[50px] p-3 font-medium text-white">
+                      {/*  */}
+                    </th>
                     <th className="min-w-[50px] p-3 font-medium text-white">
                       No
                     </th>
@@ -180,14 +180,79 @@ const PerpanjangAudit: React.FC = () => {
                 </thead>
                 <tbody>
                   {isPaginating ? (
-                    <tr>
-                      <td className="text-center w-full p-6" colSpan={10}>
-                        <l-bouncy size={50} color={'#36454F'} />
-                      </td>
-                    </tr>
+                    Array(3)
+                      .fill([])
+                      .map((basoka: any, theindex: number) => (
+                        <tr key={theindex}>
+                          {Array(12)
+                            .fill([])
+                            .map((aduhai: any, auindex: number) => (
+                              <TableFilteringReal key={auindex} />
+                            ))}
+                        </tr>
+                      ))
                   ) : audits?.audits?.length > 0 ? (
                     audits?.audits?.map((item: any, index: number) => (
                       <tr key={index}>
+                        <td className="border-b border-[#eee] dark:border-strokedark p-3">
+                          <div className="flex justify-start items-center gap-2">
+                            {item?.kategori_temuan?.some(
+                              (cat: string) => cat == 'mayor',
+                            ) ? (
+                              <div className="group relative transition-all inline-block">
+                                <span className="px-2.5 py-[0.25px] rounded-full bg-red-400"></span>
+                                <div className="absolute transition-all left-0 top-full z-20 mt-2 w-[150px] rounded bg-black border-white px-3.5 py-1.5 text-sm font-medium text-white scale-0 group-hover:scale-100">
+                                  <span className="absolute top-[-2px] left-2 z-10 h-2 w-2 rotate-45 rounded-sm bg-black"></span>
+                                  {
+                                    item?.kategori_temuan?.filter(
+                                      (cihuy: string) => cihuy == 'mayor',
+                                    ).length
+                                  }{' '}
+                                  Temuan Mayor
+                                </div>
+                              </div>
+                            ) : (
+                              ''
+                            )}
+                            {item?.kategori_temuan?.some(
+                              (cat: string) => cat == 'minor',
+                            ) ? (
+                              <div className="group relative transition-all inline-block">
+                                <span className="px-2.5 py-[0.25px] rounded-full bg-yellow-400"></span>
+                                <div className="absolute transition-all left-0 top-full z-20 mt-2 w-[150px] rounded bg-black border-white px-3.5 py-1.5 text-sm font-medium text-white scale-0 group-hover:scale-100">
+                                  <span className="absolute top-[-2px] left-2 z-10 h-2 w-2 rotate-45 rounded-sm bg-black"></span>
+                                  {
+                                    item?.kategori_temuan?.filter(
+                                      (cihuy: string) => cihuy == 'minor',
+                                    ).length
+                                  }{' '}
+                                  Temuan Minor
+                                </div>
+                              </div>
+                            ) : (
+                              ''
+                            )}
+                            {item?.kategori_temuan?.some(
+                              (cat: string) => cat == 'observasi',
+                            ) ? (
+                              <div className="group relative transition-all inline-block">
+                                <span className="px-2.5 py-[0.25px] rounded-full bg-blue-400"></span>
+                                <div className="absolute transition-all left-0 top-full z-20 mt-2 w-[170px] rounded bg-black border-white px-3.5 py-1.5 text-sm font-medium text-white scale-0 group-hover:scale-100">
+                                  <span className="absolute top-[-2px] left-2 z-10 h-2 w-2 rotate-45 rounded-sm bg-black"></span>
+                                  {
+                                    item?.kategori_temuan?.filter(
+                                      (cihuy: string) => cihuy == 'observasi',
+                                    ).length
+                                  }{' '}
+                                  Temuan Observasi
+                                </div>
+                              </div>
+                            ) : (
+                              ''
+                            )}
+                          </div>
+                        </td>
+
                         <td className="border-b border-[#eee] dark:border-strokedark p-3">
                           <h5 className="font-medium text-black dark:text-white">
                             {index + 1}
@@ -246,10 +311,10 @@ const PerpanjangAudit: React.FC = () => {
                         </td>
                         <td className="border-b border-[#eee] dark:border-strokedark p-3">
                           <h5 className="font-medium text-black dark:text-white">
-                            {item?.is_responded ? (
-                              <FiCheckCircle className="text-lime-500 text-2xl" />
+                            {item?.is_responded == '1' ? (
+                              <BsCheckCircleFill className="text-lime-400 text-2xl" />
                             ) : (
-                              <FiXCircle className="text-red-500 text-2xl" />
+                              <BsXCircleFill className="text-red-400 text-2xl" />
                             )}
                           </h5>
                         </td>
