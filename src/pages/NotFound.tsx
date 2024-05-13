@@ -4,11 +4,11 @@ import { useNavigate } from 'react-router-dom';
 
 const NotFound: React.FC = () => {
   const [show, setShow] = useState<boolean>(false);
-  const history = useNavigate();
+  const navigate = useNavigate();
   const handlePrev = () => {
     setShow(false);
     setTimeout(() => {
-      history(-1);
+      navigate(-1);
     }, 500);
   };
   useEffect(() => {

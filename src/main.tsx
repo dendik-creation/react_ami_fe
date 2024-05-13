@@ -5,6 +5,7 @@ import App from './App';
 import './css/style.css';
 import './css/splide_custom.css';
 import './css/font.css';
+import './css/font.css';
 import 'jsvectormap/dist/css/jsvectormap.css';
 import 'flatpickr/dist/flatpickr.min.css';
 
