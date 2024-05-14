@@ -5,7 +5,7 @@ import toastFire from '../../hooks/toastFire';
 ring.register();
 
 export default function LoadFetch() {
-  const [timeoutValue, setTimeoutValue] = useState<number>(6000);
+  const [timeoutValue, setTimeoutValue] = useState<number>(10000);
   const [intervalValue, setIntervalValue] = useState<number>(0);
   let intervalLoop: any;
   useEffect(() => {

@@ -376,7 +376,7 @@ const MyAuditList: React.FC = () => {
                                     Open
                                   </span>
                                 ) : (
-                                  <span className="rounded-md px-2 bg-lime-300 py-1">
+                                  <span className="rounded-md px-2 bg-red-300 py-1">
                                     Close
                                   </span>
                                 )}
