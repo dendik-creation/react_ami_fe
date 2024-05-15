@@ -34,7 +34,7 @@ const SignIn: React.FC = () => {
     isSelectRole: false,
   });
 
-  const [isoList, setIsoList] = useState<any>();
+  const [isoList, setIsoList] = useState<any[]>([]);
   const [availableRole, setAvailable] = useState<string[]>(['']);
   const [greetingName, setGreeting] = useState<string>('');
   const [selectedRole, setSelectedRole] = useState<string>('');
@@ -88,10 +88,12 @@ const SignIn: React.FC = () => {
   };
 
   useEffect(() => {
-    setTimeout(() => {
-      setTransition({ ...transition, show: true });
-    }, 500);
-  }, []);
+    if (isoList.length > 0) {
+      setTimeout(() => {
+        setTransition({ ...transition, show: true });
+      }, 500);
+    }
+  }, [isoList]);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     setTransition((prev) => ({ ...prev, loading: true }));
@@ -124,7 +126,7 @@ const SignIn: React.FC = () => {
             {/* <p className="2xl:px-20 text-3xl font-bold text-slate-700">
               Sistem Audit Mutu Internal Pura
             </p> */}
-            <center>
+            <center className="">
               <img
                 src="/img/log-in.svg"
                 alt=""

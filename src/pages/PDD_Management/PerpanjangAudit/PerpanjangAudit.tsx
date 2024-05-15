@@ -120,7 +120,7 @@ const PerpanjangAudit: React.FC = () => {
           <Breadcrumb
             pageName="Perpanjang Audit"
             description={
-              'Audit yang belum direspon hingga melebihi tanggal target akan ditampilkan disini'
+              'Audit yang terlambat direspon dapat diperpanjang disini'
             }
           />
         </Transition>

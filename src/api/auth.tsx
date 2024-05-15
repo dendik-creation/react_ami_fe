@@ -35,6 +35,7 @@ export const login = async (
     }));
     return response.data;
   } catch (error: any) {
+    document.getElementById('username')?.focus();
     toastFire({
       message: error.response.data.message,
       status: false,
