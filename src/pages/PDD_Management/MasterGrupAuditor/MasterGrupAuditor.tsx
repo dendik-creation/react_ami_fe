@@ -51,6 +51,24 @@ const MasterGrupAuditor: React.FC = () => {
 
   const navigate: NavigateFunction = useNavigate();
 
+  const handleCreateIncrement = () => {
+    const getGrupPeriode = grupList?.data?.map((item: GrupAuditor) => {
+      return {
+        tahun: item.nama_grup.slice(0, 4),
+        periode: item.nama_grup.charAt(4),
+      };
+    });
+    const nowYear = new Date().getFullYear();
+    const nowPeriode = new Date().getMonth() + 1 > 6 ? 2 : 1;
+    const incrementByPeriode = getGrupPeriode?.filter(
+      (item: any) => item.periode == nowPeriode && item.tahun == nowYear,
+    ).length;
+
+    return navigate(
+      `/master/grup-auditor/create?inc=${incrementByPeriode + 1}`,
+    );
+  };
+
   const handleRemove = (id: number) => {
     setIdDel(id);
     setShowModal(true);
@@ -142,13 +160,7 @@ const MasterGrupAuditor: React.FC = () => {
               }
             />
             <button
-              onClick={() =>
-                navigate(
-                  `/master/grup-auditor/create?inc=${
-                    grupList?.data.length + 1
-                  }`,
-                )
-              }
+              onClick={() => handleCreateIncrement()}
               className="flex text-white bg-yellow-500 px-2.5 py-1.5 rounded-md justify-start items-center gap-3 hover:bg-yellow-700 transition-all"
             >
               <FiPlusSquare className="text-2xl" />
