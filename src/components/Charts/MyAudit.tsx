@@ -39,7 +39,7 @@ const MyAudit: React.FC<Dataset> = ({ dataset }) => {
       labels: {
         formatter: (val, opts) => `${Math.floor(val)}`,
       },
-      max: Math.max(dataset?.mayor, dataset?.minor, dataset?.observasi) * 5,
+      max: Math.max(dataset?.mayor, dataset?.minor, dataset?.observasi) * 2,
     },
     responsive: [
       {

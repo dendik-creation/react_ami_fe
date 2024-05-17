@@ -242,6 +242,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               Periode {new Date().getMonth() + 1 > 6 ? 2 : 1}
             </div>
           </div>
+          <span className="bg-slate-600 w-0.5 h-9 rounded-full"></span>
           <div className="text-slate-400">
             <div className="text-md font-semibold">ISO</div>
             <div className="text-sm">{credential?.meta?.kode_iso}</div>
