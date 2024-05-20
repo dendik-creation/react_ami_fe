@@ -12,6 +12,7 @@ import { activeRoleSelected, login } from '../../api/auth';
 import { RadioGroup, Transition } from '@headlessui/react';
 import { api as apiIso } from '../../api/master_iso';
 import { credential as hasCredential } from '../../utils/constant';
+import LoadFetch from '../../common/Loader/LoadFetch';
 
 const SignIn: React.FC = () => {
   interface Credential {
@@ -112,8 +113,23 @@ const SignIn: React.FC = () => {
   return (
     <div className="w-[100vw] h-[100vh] overflow-hidden bg-white flex justify-center items-center">
       <Transition
-        show={transition.show}
+        show={!transition.show && !transition.isSelectRole}
         enter="transform transition duration-300"
+        enterFrom="opacity-0"
+        enterTo="opacity-100"
+        leave="transform duration-300 transition ease-in-out"
+        leaveFrom="opacity-100"
+        leaveTo="opacity-0"
+        className="w-full flex flex-col gap-7 justify-center items-center"
+      >
+        <LoadFetch />
+        <span className="font-medium text-lg text-slate-600">
+          Memuat untuk pertama kali...
+        </span>
+      </Transition>
+      <Transition
+        show={transition.show}
+        enter="transform transition duration-300 delay-700"
         enterFrom="opacity-0 scale-95"
         enterTo="opacity-100 scale-100"
         leave="transform duration-300 transition"

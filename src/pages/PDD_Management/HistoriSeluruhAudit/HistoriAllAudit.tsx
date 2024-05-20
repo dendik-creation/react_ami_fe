@@ -189,7 +189,7 @@ const HistoriAllAudit: React.FC = () => {
                   <span className="font-medium">Broadcast Auditee</span>{' '}
                 </div>
               </button>
-              <div className="absolute right-full top-1/2 z-20 mr-3 group-hover:cursor-help -translate-y-1/2 w-[300px] rounded bg-black px-4.5 py-1.5 text-sm font-medium text-white opacity-0 group-hover:opacity-100">
+              <div className="absolute right-full transition-all top-1/2 z-20 mr-3 group-hover:cursor-help -translate-y-1/2 w-[300px] rounded bg-black px-4.5 py-1.5 text-sm font-medium text-white opacity-0 translate-x-6 group-hover:opacity-100 group-hover:translate-x-0">
                 <span className="absolute right-[-3px] top-1/2 -z-10 h-2 w-2 -translate-y-1/2 rotate-45 rounded-sm bg-black"></span>
                 Mengingatkan Seluruh Auditee Untuk Penyelesaian Audit via Email
               </div>
