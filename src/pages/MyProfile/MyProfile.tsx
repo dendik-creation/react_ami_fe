@@ -121,7 +121,6 @@ const MyProfile: React.FC = () => {
   };
 
   useEffect(() => {
-    console.log(password);
     if (password.tryCount >= 3) {
       toastFire({
         message: 'Hubungi Pdd untuk reset password',

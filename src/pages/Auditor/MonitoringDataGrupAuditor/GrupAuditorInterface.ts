@@ -13,7 +13,8 @@ export interface GrupAuditor {
         status: string;
         user?: User;
       }[]
-    | null;
+    | null
+    | any;
   auditor?: {
     id: number;
     user_id: number;

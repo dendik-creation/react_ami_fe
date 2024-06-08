@@ -4,16 +4,6 @@ import { Route, Routes, useLocation } from 'react-router-dom';
 import Loader from './common/Loader';
 import PageTitle from './components/PageTitle';
 import SignIn from './pages/Authentication/SignIn';
-import SignUp from './pages/Authentication/SignUp';
-import Calendar from './pages/Calendar';
-import Chart from './pages/Chart';
-import FormElements from './pages/Form/FormElements';
-import FormLayout from './pages/Form/FormLayout';
-import Profile from './pages/Profile';
-import Settings from './pages/Settings';
-import Tables from './pages/Tables';
-import Alerts from './pages/UiElements/Alerts';
-import Buttons from './pages/UiElements/Buttons';
 import { Toaster } from 'react-hot-toast';
 import { AuthRoutes, GuestRoutes } from './middleware/middleware';
 import DecisonDashboard from './pages/Dashboard/DecisionDashboard';
@@ -82,7 +72,7 @@ function App() {
         leaveFrom="opacity-100"
         leaveTo="opacity-0"
       >
-        <Toaster position="bottom-right" />
+        <Toaster containerStyle={{ zIndex: 10000 }} position="bottom-right" />
         <Routes location={location} key={pathname}>
           <Route element={<GuestRoutes />}>
             <Route

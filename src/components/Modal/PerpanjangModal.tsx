@@ -62,7 +62,7 @@ const PerpanjangModal: React.FC<ConfirmSubmitRespon> = ({
   const handleChange = (e: any, from: string) => {
     if (from == 'input') {
       if (
-        e.target.value != '' &&
+        e.target.value.length > 0 &&
         e.target.value >= 0 &&
         e.target.value <= 365
       ) {
