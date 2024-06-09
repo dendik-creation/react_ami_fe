@@ -177,6 +177,7 @@ const MasterDepartemenCreate: React.FC = () => {
                     Kode Departemen
                   </label>
                   <input
+                    autoComplete="off"
                     type="text"
                     name="kode"
                     id="kode"
@@ -192,6 +193,7 @@ const MasterDepartemenCreate: React.FC = () => {
                     Ekstensi Departemen
                   </label>
                   <input
+                    autoComplete="off"
                     type="text"
                     name="ekstensi"
                     id="ekstensi"
@@ -207,6 +209,7 @@ const MasterDepartemenCreate: React.FC = () => {
                     Nama Departemen
                   </label>
                   <input
+                    autoComplete="off"
                     type="text"
                     name="nama_departemen"
                     id="nama_departemen"
@@ -273,6 +276,7 @@ const MasterDepartemenCreate: React.FC = () => {
                         (item: any, index: number) => (
                           <div className="flex gap-2" key={index}>
                             <input
+                              autoComplete="off"
                               type="text"
                               name="nama_sub_departemen"
                               id="nama_sub_departemen"

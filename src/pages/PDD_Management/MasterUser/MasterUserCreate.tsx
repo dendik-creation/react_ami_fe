@@ -147,6 +147,7 @@ const MasterUserCreate: React.FC = () => {
                     Username
                   </label>
                   <input
+                    autoComplete="off"
                     type="text"
                     name="username"
                     id="username"
@@ -162,6 +163,7 @@ const MasterUserCreate: React.FC = () => {
                     Email
                   </label>
                   <input
+                    autoComplete="off"
                     type="email"
                     name="email"
                     id="email"
@@ -177,6 +179,7 @@ const MasterUserCreate: React.FC = () => {
                     Nama Lengkap
                   </label>
                   <input
+                    autoComplete="off"
                     type="text"
                     name="nama_lengkap"
                     id="nama_lengkap"
@@ -192,6 +195,7 @@ const MasterUserCreate: React.FC = () => {
                     Password
                   </label>
                   <input
+                    autoComplete="off"
                     type="text"
                     name="password"
                     id="password"

@@ -247,7 +247,7 @@ const MasterClausulCreate: React.FC = () => {
           className="text-slate-700  font-bold flex items-center flex-col md:flex-row justify-between"
         >
           <Breadcrumb
-            pageName={`Edit Data Clausul`}
+            pageName={`Data Clausul Baru`}
             description={
               'Anda dapat menambah atau mengurangi dari clausul hingga sub didalamnya'
             }
@@ -280,6 +280,7 @@ const MasterClausulCreate: React.FC = () => {
               <div className="flex flex-col gap-2">
                 <span className="">Kode</span>
                 <input
+                  autoComplete="off"
                   type="text"
                   name="kode"
                   id="kode"
@@ -293,6 +294,7 @@ const MasterClausulCreate: React.FC = () => {
               <div className="flex md:w-1/2 w-full flex-col gap-2">
                 <span className="">Nama Judul Clausul</span>
                 <input
+                  autoComplete="off"
                   type="text"
                   name="judul_clausul"
                   id="judul_clausul"
@@ -354,6 +356,7 @@ const MasterClausulCreate: React.FC = () => {
                           <div className="flex flex-col gap-2">
                             <span className="">Kode Clausul</span>
                             <input
+                              autoComplete="off"
                               type="text"
                               name="kode_clausul"
                               id="kode_clausul"
@@ -369,6 +372,7 @@ const MasterClausulCreate: React.FC = () => {
                           <div className="flex md:w-1/2 w-full flex-col gap-2">
                             <span className="">Nama Clausul</span>
                             <input
+                              autoComplete="off"
                               type="text"
                               name="nama_clausul"
                               id="nama_clausul"
@@ -434,6 +438,7 @@ const MasterClausulCreate: React.FC = () => {
                                   <div className="flex justify-start flex-col gap-2 xl:w-1/2 w-full">
                                     <span className="">Kode Sub Clausul</span>
                                     <input
+                                      autoComplete="off"
                                       type="text"
                                       name="kode_sub_clausul"
                                       id="kode_sub_clausul"
@@ -453,6 +458,7 @@ const MasterClausulCreate: React.FC = () => {
                                   <div className="flex justify-start flex-col w-full gap-2">
                                     <span className="">Nama Sub Clausul</span>
                                     <input
+                                      autoComplete="off"
                                       type="text"
                                       name="nama_sub_clausul"
                                       id="nama_sub_clausul"
