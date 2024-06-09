@@ -19,7 +19,7 @@ class UserSeed extends Seeder
             'nama_lengkap' => "Adit Sigma",
             'email' => "adit@gmail.com",
             'password' => Hash::make('12345'),
-            'role' => json_encode(['auditor', 'auditee', 'pdd', 'management']),
+            'role' => json_encode(['auditee', 'auditor', 'pdd', 'management']),
             'periode_active_role' => 'auditor',
             'departemen_id' => 1,
         ]);

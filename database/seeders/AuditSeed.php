@@ -192,52 +192,52 @@ class AuditSeed extends Seeder
             ]),
         ]);
 
-        DetailAudit::create([
-            'header_audit_id' => $header_skt_rt1_2024_1['id'],
-            'judul_clausul_id' => 7,
-            'clausul_id' => 11,
-            'sub_clausul_id' => 13,
-            'sub_departemen_id' => null,
-            'tanggal_audit' => '2024-03-03',
-            'tanggal_realisasi' => null,
-            'tanggal_target' => '2024-04-03',
-            'kategori' => 'observasi',
-            'jenis_temuan' => 'new',
-            'status' => 'open',
-            'temuan' => "Ini Temuannya",
-            'analisa' => null,
-            'attachment' => null,
-            'tindakan' => null,
+        // DetailAudit::create([
+        //     'header_audit_id' => $header_skt_rt1_2024_1['id'],
+        //     'judul_clausul_id' => 7,
+        //     'clausul_id' => 11,
+        //     'sub_clausul_id' => 13,
+        //     'sub_departemen_id' => null,
+        //     'tanggal_audit' => '2024-03-03',
+        //     'tanggal_realisasi' => null,
+        //     'tanggal_target' => '2024-04-03',
+        //     'kategori' => 'observasi',
+        //     'jenis_temuan' => 'new',
+        //     'status' => 'open',
+        //     'temuan' => "Ini Temuannya",
+        //     'analisa' => null,
+        //     'attachment' => null,
+        //     'tindakan' => null,
 
-            'static_data' => json_encode([
-                'judul_clausul' => JudulClausul::findOrFail(1),
-                'clausul' => Clausul::findOrFail(11),
-                'sub_clausul' => SubClausul::findOrFail(13),
-            ]),
-        ]);
+        //     'static_data' => json_encode([
+        //         'judul_clausul' => JudulClausul::findOrFail(1),
+        //         'clausul' => Clausul::findOrFail(11),
+        //         'sub_clausul' => SubClausul::findOrFail(13),
+        //     ]),
+        // ]);
 
-        DetailAudit::create([
-            'header_audit_id' => $header_skt_rt1_2024_1['id'],
-            'judul_clausul_id' => 7,
-            'clausul_id' => 11,
-            'sub_clausul_id' => 13,
-            'sub_departemen_id' => null,
-            'tanggal_audit' => '2024-03-03',
-            'tanggal_realisasi' => null,
-            'tanggal_target' => '2024-04-03',
-            'kategori' => 'mayor',
-            'jenis_temuan' => 'new',
-            'status' => 'open',
-            'temuan' => "Ini Temuannya",
-            'analisa' => null,
-            'attachment' => null,
-            'tindakan' => null,
+        // DetailAudit::create([
+        //     'header_audit_id' => $header_skt_rt1_2024_1['id'],
+        //     'judul_clausul_id' => 7,
+        //     'clausul_id' => 11,
+        //     'sub_clausul_id' => 13,
+        //     'sub_departemen_id' => null,
+        //     'tanggal_audit' => '2024-03-03',
+        //     'tanggal_realisasi' => null,
+        //     'tanggal_target' => '2024-04-03',
+        //     'kategori' => 'mayor',
+        //     'jenis_temuan' => 'new',
+        //     'status' => 'open',
+        //     'temuan' => "Ini Temuannya",
+        //     'analisa' => null,
+        //     'attachment' => null,
+        //     'tindakan' => null,
 
-            'static_data' => json_encode([
-                'judul_clausul' => JudulClausul::findOrFail(1),
-                'clausul' => Clausul::findOrFail(11),
-                'sub_clausul' => SubClausul::findOrFail(13),
-            ]),
-        ]);
+        //     'static_data' => json_encode([
+        //         'judul_clausul' => JudulClausul::findOrFail(1),
+        //         'clausul' => Clausul::findOrFail(11),
+        //         'sub_clausul' => SubClausul::findOrFail(13),
+        //     ]),
+        // ]);
     }
 }
